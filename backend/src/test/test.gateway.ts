@@ -10,18 +10,32 @@ import {
 import { Server, Socket } from 'socket.io';
 
 interface Player {
-  socketId: string | null; // null when disconnected
+  socketId: string | null;
   token: string;
 }
-
 interface Room {
   code: string;
-  players: Map<string, Player>; // keyed by token, not socketId
+  players: Map<string, Player>;
 }
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:5173',
+        'http://192.168.1.71:5173',
+        'https://resturant-app-frontend-gamma.vercel.app',
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  },
+})
 export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer()
   server: Server;
 
   roomMap = new Map<string, Room>();
@@ -37,9 +51,6 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
       for (const player of room.players.values()) {
         if (player.socketId === client.id) {
           player.socketId = null; // mark disconnected, don't delete yet
-          this.server.to(room.code).emit('playerListUpdated', {
-            players: Array.from(room.players.values()),
-          });
           // TODO: grace-period timer to fully remove them if they
           // don't rejoin within ~30-60s (prevents memory leak)
         }
@@ -74,6 +85,7 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // tell the creator their room code + token, or they can never
     // share the code or rejoin their own room later
     client.emit('roomCreated', { roomId, token });
+    // client.to(roomId).emit('playerListUpdated', room.players);
   }
 
   @SubscribeMessage('joinRoom')
@@ -97,11 +109,10 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.join(data.code); // <-- was missing
 
     client.emit('joinedRoom', { token });
-
-    // let everyone in the room (including the new joiner) see updated list
-    this.server.to(data.code).emit('playerListUpdated', {
-      players: Array.from(room.players.values()),
-    });
+    console.log('fucking room is', room.players);
+    const playersArray = Array.from(room.players.values());
+    console.log(playersArray);
+    client.to(room.code).emit('playerListUpdated', { players: playersArray });
   }
 
   @SubscribeMessage('rejoinRoom')
@@ -109,7 +120,7 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { code: string; token: string },
   ) {
-    const room = this.roomMap.get(data.code); // <-- was missing
+    const room = this.roomMap.get(data.code)!; // <-- was missing
     const player = room?.players.get(data.token); // <-- was this.roomMap.players (bug)
 
     if (!player) {
@@ -119,11 +130,11 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     player.socketId = client.id; // swap in the new socket
     client.join(data.code);
+    const playersArray = Array.from(room.players.values());
+    console.log(playersArray);
 
     client.emit('rejoined', { token: data.token });
-
-    this.server.to(data.code).emit('playerListUpdated', {
-      players: Array.from(room!.players.values()),
-    });
+    console.log('fucking room is', room.players);
+    client.to(room.code).emit('playerListUpdated', { players: playersArray });
   }
 }
