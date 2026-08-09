@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "./socket";
 
 const App = () => {
   const [connected, setconnected] = useState(false);
   const [value, setvalue] = useState("");
   const [players, setPlayers] = useState([]);
+
+  interface playerInterface {
+    name: string;
+    token: string;
+    socketId: string;
+  }
   useEffect(() => {
     socket.on("connect", () => {
       console.log("conneted", socket.id);
@@ -81,10 +87,10 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
-          {players?.map((player) => (
-            <tr key={player.token}>
-              <td>{player.name ?? player.token}</td>
-              <td>{player.socketId ? "Connected" : "Disconnected"}</td>
+          {players?.map((player: playerInterface) => (
+            <tr key={player?.token}>
+              <td>{player?.name ?? player?.token}</td>
+              <td>{player?.socketId ? "Connected" : "Disconnected"}</td>
             </tr>
           ))}
         </tbody>
