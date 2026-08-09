@@ -36,6 +36,7 @@ interface Room {
   },
 })
 export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
   server: Server;
 
   roomMap = new Map<string, Room>();
@@ -85,7 +86,6 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // tell the creator their room code + token, or they can never
     // share the code or rejoin their own room later
     client.emit('roomCreated', { roomId, token });
-    // client.to(roomId).emit('playerListUpdated', room.players);
   }
 
   @SubscribeMessage('joinRoom')
@@ -94,6 +94,7 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { code: string },
   ) {
     const room = this.roomMap.get(data.code);
+    console.log('previously connected socket is', room);
     if (!room) {
       client.emit('error', { message: 'Room not found' });
       return;
@@ -112,7 +113,9 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('fucking room is', room.players);
     const playersArray = Array.from(room.players.values());
     console.log(playersArray);
-    client.to(room.code).emit('playerListUpdated', { players: playersArray });
+    this.server
+      .to(room.code)
+      .emit('playerListUpdated', { players: playersArray });
   }
 
   @SubscribeMessage('rejoinRoom')
@@ -135,6 +138,8 @@ export class TestGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     client.emit('rejoined', { token: data.token });
     console.log('fucking room is', room.players);
-    client.to(room.code).emit('playerListUpdated', { players: playersArray });
+    this.server
+      .to(room.code)
+      .emit('playerListUpdated', { players: playersArray });
   }
 }
