@@ -36,11 +36,6 @@ export class MemeService {
     this.logger.log(
       `Meme templates initialized with ${this.memeTemplate.length} active templates.`,
     );
-
-    // return {
-    //   msg: 'Meme template loaded to in memeory',
-    //   data: this.memeTemplate,
-    // };
   }
 
   getRandomMemeTemplate(playerCount: number) {
@@ -86,4 +81,12 @@ export class MemeService {
       images: randomImage,
     };
   }
+
+  // private getIndividualUserMeme(playerCount: number, userTokens: any) {
+  //   const randomImages = this.getRandomMemeTemplate(playerCount);
+  //   if (!randomImages) {
+  //     console.log('Error in getting memes');
+  //   }
+  //   userTokens.forEach((token: any) => console.log('token is', token));
+  // }
 }
