@@ -52,7 +52,7 @@ export class MemeService {
     console.log('this.memeTemplate', this.memeTemplate);
     const randomNumbers: number[] = [];
     const randomImage: any = [];
-    let numberofMemerequired = playerCount;
+    let numberofMemerequired = playerCount * 10;
     console.log('executing loop');
     for (let i = 0; i < numberofMemerequired; i++) {
       console.log('executing loop', i);
@@ -82,11 +82,33 @@ export class MemeService {
     };
   }
 
-  // private getIndividualUserMeme(playerCount: number, userTokens: any) {
-  //   const randomImages = this.getRandomMemeTemplate(playerCount);
-  //   if (!randomImages) {
-  //     console.log('Error in getting memes');
-  //   }
-  //   userTokens.forEach((token: any) => console.log('token is', token));
-  // }
+  getIndividualMemeTemplate(players: any) {
+    console.log('players is', players);
+    if (players.length > 7) {
+      this.logger.warn('number exceed');
+      throw new BadRequestException('number exceed');
+    }
+
+    if (players.length < 2) {
+      this.logger.warn('number is less than 2');
+      throw new BadRequestException('number is less than 2');
+    }
+    const randomImage = this.getRandomMemeTemplate(players.length);
+    const individualMemeTemplate: any = [];
+    players.forEach((player: any, index: number) => {
+      const playerChunk = randomImage.images.slice(
+        index * 10,
+        (index + 1) * 10,
+      );
+      individualMemeTemplate.push({
+        player: player,
+        extraImage: playerChunk.slice(0, 3),
+        memeTemplate: playerChunk.slice(3, 10),
+      });
+    });
+    return {
+      msg: 'Individual meme templates selected',
+      data: individualMemeTemplate,
+    };
+  }
 }

@@ -9,4 +9,8 @@ export class MemeController {
   getRandomMemeTemplate(@Body('playerCount') playerCount: number) {
     return this.memeService.getRandomMemeTemplate(playerCount);
   }
+  @Get('individual')
+  getIndividualMemeTemplate(@Body('players') players: any) {
+    return this.memeService.getIndividualMemeTemplate(players);
+  }
 }
