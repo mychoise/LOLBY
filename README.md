@@ -2,18 +2,20 @@
 
 A browser-based party game platform. No sign-up, no app install — create a room, share the code, play with friends on your phones.
 
+## Overview
+
 Inspired by the Jackbox Party Pack format: one host creates a room, friends join via a code, host picks a game, everyone plays from their own device.
 
 ## Status
 
 🚧 Pre-alpha. Core room/lobby shell not yet built. No games shipped yet.
 
-## Concept
+## Features / Concept
 
 One platform, multiple game modes, all sharing the same room infrastructure:
 
 | Game | Format | Status |
-|---|---|---|
+| --- | --- | --- |
 | Make It Meme | Caption or react to memes | Concept — rules undecided |
 | Skribble | Draw & guess (skribbl.io-style) | Not started |
 | TikTok Comments Section | TBD | Concept only |
@@ -25,6 +27,7 @@ One platform, multiple game modes, all sharing the same room infrastructure:
 ## Architecture
 
 **Shared shell (build once, reuse for every game):**
+
 - Room creation with a short join code
 - Join-by-code, no auth required
 - Lobby: player list, host controls
@@ -35,14 +38,65 @@ One platform, multiple game modes, all sharing the same room infrastructure:
 
 **Per-game modules** plug into the shell and only implement their own round logic, state, and scoring.
 
-## Planned Stack
+## Tech Stack
 
 - Backend: NestJS + Socket.io
 - ORM/DB: Drizzle ORM + PostgreSQL (Neon)
-- Cache/session state: Redis
-- Object storage (meme templates, images): Cloudflare R2
+- Cache/session state: Redis (planned)
+- Object storage (meme templates, images): Cloudflare R2 (planned)
 - Frontend: React + Vite
 - Hosting: Backend on Railway, frontend on Vercel
+
+This repo is a monorepo with two packages:
+
+- `backend/` — NestJS + Socket.io + Drizzle (API & realtime)
+- `frontend/` — React + Vite client
+
+## Project Structure
+
+    ```text
+lolby/
+├── backend/   # NestJS + Socket.io + Drizzle (API & realtime)
+└── frontend/  # React + Vite client
+```
+
+## Prerequisites
+
+- Node.js (>= 18; current dependencies target Node 20+)
+- PostgreSQL instance (connection string via `DATABASE_URL`)
+- Redis and Cloudflare R2 — not yet required (planned for later)
+
+## Local Setup
+
+1. Clone the repository.
+
+2. Start the backend:
+
+   ```bash
+   cd backend
+   npm install
+   # create a .env file with DATABASE_URL (and optional PORT, default 3000)
+   npm run start:dev   # listens on http://localhost:3000
+   ```
+
+   Example `.env`:
+
+   ```bash
+   DATABASE_URL=postgres://user:password@localhost:5432/lolby
+   PORT=3000
+   ```
+
+   Database migrations and meme-template seeding run automatically on startup (see `backend/README.md`).
+
+3. Start the frontend (in a separate terminal):
+
+   ```bash
+   cd frontend
+   npm install
+   npm run dev   # Vite dev server on http://localhost:5173
+   ```
+
+   The backend allows CORS from `http://localhost:5173` in development, so the frontend can talk to it directly.
 
 ## Build Order
 
@@ -55,14 +109,8 @@ One platform, multiple game modes, all sharing the same room infrastructure:
 - [ ] Make It Meme: exact game loop and win condition (currently undefined)
 - [ ] TikTok Comments Section / News / Fake Reviews: no defined mechanics yet
 - [ ] Game selection: does host pick a game per room, or is each game a separate room type/URL?
-- [ ] Meme template source: self-hosted DB + Cloudflare R2 (decided) — seeding script not yet written
-
-## Local Setup
-
-```bash
-# TODO: fill in once the backend/frontend scaffolding exists
-```
+- [ ] Meme template source: self-hosted DB + Cloudflare R2 (decided) — seeding script not yet wired to an npm script
 
 ## License
 
-TBD
+UNLICENSED — All rights reserved.
