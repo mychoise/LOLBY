@@ -7,18 +7,22 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Player, Room } from './meme.interface';
-import { MemeService } from './meme.service';
+import { Player, Room } from '../meme/meme.interface';
+import { MemeService } from '../meme/meme.service';
 import { AllExceptionsFilter } from 'src/common/filters/ws-exception.filter';
+import { RoundService } from 'src/round/round.service';
 @UseFilters(AllExceptionsFilter)
 @WebSocketGateway()
-export class MemeGateway {
+export class RoundGateway {
   @WebSocketServer()
   server: Server;
-  private readonly logger = new Logger(MemeGateway.name);
+  private readonly logger = new Logger(RoundGateway.name);
   private roomDetail = new Map<string, Room>();
 
-  constructor(private readonly memeService: MemeService) {}
+  constructor(
+    private readonly memeService: MemeService,
+    private readonly roundService: RoundService,
+  ) {}
 
   handleConnection(client: Socket) {
     console.log('client joined!!!!!', client.id);
@@ -107,41 +111,18 @@ export class MemeGateway {
       client.emit('appError', { message: 'Room not found' });
       return;
     }
-    if (room.host_id !== data.token) {
-      console.log('you are not host sorry!!!');
-      client.emit('appError', { message: 'you are not host' });
+    const result = this.roundService.startGame(room, data.token);
+    console.log('result is', result);
+    if (result.success === false) {
+      client.emit('appError', { message: result.message });
       return;
     }
-    const players = room.players;
-    const randomImages = this.memeService.getIndividualMemeTemplate(players);
-    const images = randomImages.data;
-    console.log('images are', images);
-    console.log('players are ', players);
-    room.gamestatus = 'in-progress';
-
-    players.forEach((item: Player) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const memeTemplate: any = images.filter(
-        (value) => item.token === value.player.token,
-      );
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const actualMeme = memeTemplate.map((entry) => entry.memeTemplate);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const extraMeme = memeTemplate.map((entry) => entry.extraImage);
-      console.log('memeTemplate for player', item.token);
-      console.log('memeTemplate is', memeTemplate);
-      console.log('is', actualMeme[0]);
-      console.log('at', extraMeme[0]);
-      client.emit('all', memeTemplate);
-      client.emit('meme', actualMeme[0]);
-      client.emit('extra', extraMeme[0]);
-      item.memeTemplate = actualMeme[0];
-      item.extraImage = extraMeme[0];
+    room.players.forEach((item) => {
       this.server.to(item.socket_id).emit('memeImage', item.memeTemplate);
       this.server.to(item.socket_id).emit('extraImage', item.extraImage);
     });
-    console.log('ranndom Images from socket is', images);
-    client.emit('randomImages', images);
-    client.emit('playerss', players);
+    client.emit('gameStarted', {
+      message: 'Game has been started sucessfully',
+    });
   }
 }
