@@ -34,8 +34,8 @@ export interface Vote {
 
 export interface Round {
   roundNumber: number;
-  submissions: Submission[];
-  votes: Vote[];
+  submissions?: Submission[];
+  votes?: Vote[];
   phase: 'submitting' | 'voting' | 'reveal';
   roundEndsAt: number | null;
 }
