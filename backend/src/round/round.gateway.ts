@@ -137,4 +137,48 @@ export class RoundGateway {
       message: 'Game has been started sucessfully',
     });
   }
+
+  @SubscribeMessage('submitCaption')
+  handleSubmitCaption(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      roomCode: string;
+      playerToken: string;
+      imageId: string;
+      captionText: string;
+    },
+  ) {
+    const room = this.roomDetail.get(data.roomCode);
+    if (!room) {
+      client.emit('appError', { message: 'Room not found' });
+      return;
+    }
+    if (room.gamestatus !== 'in-progress') {
+      client.emit('appError', {
+        message: 'Game is not in progress, cannot submit caption',
+      });
+      return;
+    }
+    const player = room.players.find((p) => p.token === data.playerToken);
+    if (!player) {
+      client.emit('appError', { message: 'Player not found' });
+      return;
+    }
+    if (data.imageId !== player.currentRoundImage?.id) {
+      client.emit('appError', {
+        message: 'You can only submit caption for your current round image',
+      });
+      return;
+    }
+    const submission = this.roundService.handleCaptionSubmission(
+      data.playerToken,
+      data.imageId,
+      data.captionText,
+    );
+    room.currentRound?.submissions?.push(submission);
+    client.emit('captionSubmitted', {
+      message: 'Caption submitted successfully',
+    });
+  }
 }

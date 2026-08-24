@@ -38,4 +38,5 @@ export interface Round {
   submissions?: Submission[];
   votes?: Vote[];
   phase: 'submitting' | 'voting' | 'reveal';
+  roundEndsAt?: string | number;
 }

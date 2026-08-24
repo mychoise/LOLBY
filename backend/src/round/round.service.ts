@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Player, Room, Round } from 'src/meme/meme.interface';
+import { Player, Room, Round, Submission } from 'src/meme/meme.interface';
 import { MemeService } from 'src/meme/meme.service';
 
 @Injectable()
@@ -48,5 +48,18 @@ export class RoundService {
     room.currentRound = round;
     this.memeService.getImageForRound(room.players, nextRoundNumber);
     return round;
+  }
+
+  handleCaptionSubmission(
+    playerToken: string,
+    imageId: string,
+    captionText: string,
+  ) {
+    const submission: Submission = {
+      playerToken,
+      templateId: imageId,
+      captionText,
+    };
+    return submission;
   }
 }
