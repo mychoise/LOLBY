@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Player, Room } from 'src/meme/meme.interface';
+import { Player, Room, Round } from 'src/meme/meme.interface';
 import { MemeService } from 'src/meme/meme.service';
 
 @Injectable()
@@ -34,5 +34,19 @@ export class RoundService {
       item.extraImage = extraMeme[0];
     });
     return { success: true };
+  }
+
+  handleNextRound(room: Room) {
+    const nextRoundNumber = (room.currentRound?.roundNumber ?? 0) + 1;
+    const round: Round = {
+      roundNumber: nextRoundNumber,
+      submissions: [],
+      votes: [],
+      phase: 'submitting',
+      roundEndsAt: Date.now() + 60_000,
+    };
+    room.currentRound = round;
+    this.memeService.getImageForRound(room.players, nextRoundNumber);
+    return round;
   }
 }

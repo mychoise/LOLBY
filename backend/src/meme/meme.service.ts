@@ -8,6 +8,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import * as schema from 'src/drizzle/schema/index';
 import { eq } from 'drizzle-orm';
+import { Player } from './meme.interface';
 
 export interface MemeTemplate {
   id: string;
@@ -110,5 +111,12 @@ export class MemeService {
       msg: 'Individual meme templates selected',
       data: individualMemeTemplate,
     };
+  }
+
+  getImageForRound(player: Player[], roundNumber: number) {
+    player.forEach((item) => {
+      const currentRoundImage = item.memeTemplate?.[roundNumber - 1] || null;
+      item.currentRoundImage = currentRoundImage;
+    });
   }
 }

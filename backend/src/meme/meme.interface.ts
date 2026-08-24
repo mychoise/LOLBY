@@ -14,6 +14,7 @@ export interface Player {
   score: number; // you'll need this for voting/scoring later
   memeTemplate?: MemeTemplate[]; // their 7 round-images, assigned once at game start
   extraImage?: MemeTemplate[]; // their 3 bonus images
+  currentRoundImage?: MemeTemplate | null; // the image for the current round
 }
 
 export interface MemeTemplate {
@@ -37,5 +38,4 @@ export interface Round {
   submissions?: Submission[];
   votes?: Vote[];
   phase: 'submitting' | 'voting' | 'reveal';
-  roundEndsAt: number | null;
 }

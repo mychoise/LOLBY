@@ -111,16 +111,28 @@ export class RoundGateway {
       client.emit('appError', { message: 'Room not found' });
       return;
     }
+    if (room.gamestatus !== 'lobby') {
+      client.emit('appError', {
+        message: 'Game has already started , cannot fucking start again',
+      });
+      return;
+    }
     const result = this.roundService.startGame(room, data.token);
     console.log('result is', result);
     if (result.success === false) {
       client.emit('appError', { message: result.message });
       return;
     }
+    const round = this.roundService.handleNextRound(room);
     room.players.forEach((item) => {
-      this.server.to(item.socket_id).emit('memeImage', item.memeTemplate);
-      this.server.to(item.socket_id).emit('extraImage', item.extraImage);
+      this.server.to(item.socket_id).emit('memeImages', item.memeTemplate);
+      this.server.to(item.socket_id).emit('extraImages', item.extraImage);
+      this.server
+        .to(item.socket_id)
+        .emit('currentRoundImage', item.currentRoundImage);
     });
+    room.gamestatus = 'in-progress';
+    this.server.to(roomCode).emit('roundStarted', round);
     client.emit('gameStarted', {
       message: 'Game has been started sucessfully',
     });
