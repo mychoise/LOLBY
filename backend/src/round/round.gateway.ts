@@ -171,6 +171,15 @@ export class RoundGateway {
       });
       return;
     }
+    const alreadySubmitted = room.currentRound?.submissions?.find(
+      (item) => item.playerToken === data.playerToken,
+    );
+    if (alreadySubmitted) {
+      client.emit('appError', {
+        message: 'You have already submitted a caption for this round',
+      });
+      return;
+    }
     const submission = this.roundService.handleCaptionSubmission(
       data.playerToken,
       data.imageId,
@@ -179,6 +188,51 @@ export class RoundGateway {
     room.currentRound?.submissions?.push(submission);
     client.emit('captionSubmitted', {
       message: 'Caption submitted successfully',
+    });
+  }
+
+  @SubscribeMessage('sumbitVote')
+  handleSubmitVote(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      roomCode: string;
+      voterToken: string;
+      votedForToken: string;
+    },
+  ) {
+    const room = this.roomDetail.get(data.roomCode);
+    if (!room) {
+      client.emit('appError', { message: 'Room not found' });
+      return;
+    }
+    if (room.gamestatus !== 'in-progress') {
+      client.emit('appError', {
+        message: 'Game is not in progress, cannot submit vote',
+      });
+      return;
+    }
+    const player = room.players.find((p) => p.token === data.voterToken);
+    if (!player) {
+      client.emit('appError', { message: 'Player not found' });
+      return;
+    }
+    const alreadyVoted = room.currentRound?.votes?.find(
+      (item) => item.voterToken === data.voterToken,
+    );
+    if (alreadyVoted) {
+      client.emit('appError', {
+        message: 'You have already voted for this round',
+      });
+      return;
+    }
+    const vote = this.roundService.handleVoteSubmission(
+      data.voterToken,
+      data.votedForToken,
+    );
+    room.currentRound?.votes?.push(vote);
+    client.emit('voteSubmitted', {
+      message: 'Vote submitted successfully',
     });
   }
 }

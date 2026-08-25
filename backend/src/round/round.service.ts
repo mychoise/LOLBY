@@ -62,4 +62,12 @@ export class RoundService {
     };
     return submission;
   }
+
+  handleVoteSubmission(voterToken: string, votedForToken: string) {
+    const vote = {
+      voterToken,
+      votedForToken,
+    };
+    return vote;
+  }
 }
