@@ -235,4 +235,10 @@ export class RoundGateway {
       message: 'Vote submitted successfully',
     });
   }
+
+  @SubscribeMessage('getVotingImages')
+  hanldeGetVotingImages(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { roomCode: string; playerToken: string },
+  ) {}
 }
