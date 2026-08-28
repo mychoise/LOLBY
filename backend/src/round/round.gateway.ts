@@ -254,19 +254,4 @@ export class RoundGateway {
 
   @SubscribeMessage('ImageForVote')
   handlegetImageForVote(
-    @ConnectedSocket() client: Socket,
-    @MessageBody()
-    data: {
-      userToken: string;
-      roomCode: string;
-    },
-  ) {
-    const getRoomDetail = this.roomDetail.get(data.roomCode);
-    const images = getRoomDetail?.currentRound?.submissions;
-    const actualImage = images?.filter(
-      (item) => item.playerToken !== data.userToken,
-    );
-    console.log('images are', images);
-    client.emit('votingImage', actualImage);
-  }
-}
+    @ConnectedSocket() client: Socket,k
