@@ -70,4 +70,9 @@ export class RoundService {
     };
     return vote;
   }
+
+  handlecheckForSubmission(room: Room) {
+    const voteCount = room.currentRound?.submissions?.length ?? 0;
+    return voteCount === room.players.length;
+  }
 }

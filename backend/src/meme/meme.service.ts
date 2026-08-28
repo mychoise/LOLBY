@@ -8,7 +8,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import * as schema from 'src/drizzle/schema/index';
 import { eq } from 'drizzle-orm';
-import { Player } from './meme.interface';
+import { Player, Room } from './meme.interface';
 
 export interface MemeTemplate {
   id: string;

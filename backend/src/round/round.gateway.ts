@@ -189,6 +189,22 @@ export class RoundGateway {
     client.emit('captionSubmitted', {
       message: 'Caption submitted successfully',
     });
+    if (this.roundService.handlecheckForSubmission(room)) {
+      room.players.map((item) => {
+        const images = room.currentRound?.submissions;
+        const actualImage = images
+          ?.filter((value) => value.playerToken !== item.token)
+          .map((value2) => {
+            return {
+              submissionId: value2.playerToken,
+              imageUrl: item.currentRoundImage?.image_url,
+              captionText: value2.captionText,
+            };
+          });
+        console.log('voting images are', actualImage);
+        this.server.to(item.socket_id).emit('votingImages', actualImage);
+      });
+    }
   }
 
   @SubscribeMessage('sumbitVote')
@@ -234,5 +250,23 @@ export class RoundGateway {
     client.emit('voteSubmitted', {
       message: 'Vote submitted successfully',
     });
+  }
+
+  @SubscribeMessage('ImageForVote')
+  handlegetImageForVote(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      userToken: string;
+      roomCode: string;
+    },
+  ) {
+    const getRoomDetail = this.roomDetail.get(data.roomCode);
+    const images = getRoomDetail?.currentRound?.submissions;
+    const actualImage = images?.filter(
+      (item) => item.playerToken !== data.userToken,
+    );
+    console.log('images are', images);
+    client.emit('votingImage', actualImage);
   }
 }
