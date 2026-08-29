@@ -251,7 +251,4 @@ export class RoundGateway {
       message: 'Vote submitted successfully',
     });
   }
-
-  @SubscribeMessage('ImageForVote')
-  handlegetImageForVote(
-    @ConnectedSocket() client: Socket,k
+}
