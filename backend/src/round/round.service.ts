@@ -75,4 +75,18 @@ export class RoundService {
     const voteCount = room.currentRound?.submissions?.length ?? 0;
     return voteCount === room.players.length;
   }
+  handleCheckForVotingComplete(room: Room) {
+    const voteCount = room.currentRound?.votes?.length ?? 0;
+    return voteCount === room.players.length;
+  }
+  handleVoteTallyAndScore(room: Room) {
+    const players = room.players;
+    players?.forEach((item) => {
+      const score =
+        room.currentRound?.votes?.filter(
+          (value) => value.votedForToken === item.token,
+        ).length ?? 0;
+      item.score += score * 121;
+    });
+  }
 }

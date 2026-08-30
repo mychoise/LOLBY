@@ -247,8 +247,17 @@ export class RoundGateway {
       data.votedForToken,
     );
     room.currentRound?.votes?.push(vote);
+    client.emit('votedPersonDetail', towhomvoted);
     client.emit('voteSubmitted', {
       message: 'Vote submitted successfully',
     });
+    if (this.roundService.handleCheckForVotingComplete(room)) {
+      this.roundService.handleVoteTallyAndScore(room);
+      const arrangedPlayer = [...room.players].sort(
+        (a, b) => b.score - a.score,
+      );
+      console.log('arrangedPlayer is', arrangedPlayer);
+      this.server.to(data.roomCode).emit('result', arrangedPlayer);
+    }
   }
 }
