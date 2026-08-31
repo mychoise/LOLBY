@@ -106,6 +106,7 @@ export class RoundGateway {
     if (!data.token) {
       console.log('token is required');
       client.emit('appError', { message: 'Token is required' });
+      return;
     }
     if (!room) {
       client.emit('appError', { message: 'Room not found' });
@@ -124,6 +125,14 @@ export class RoundGateway {
       return;
     }
     const round = this.roundService.handleNextRound(room);
+
+    this.broadCastMessage(room, roomCode, round);
+    client.emit('gameStarted', {
+      message: 'Game has been started sucessfully',
+    });
+  }
+
+  private broadCastMessage(room: Room, roomCode: string, round: any) {
     room.players.forEach((item) => {
       this.server.to(item.socket_id).emit('memeImages', item.memeTemplate);
       this.server.to(item.socket_id).emit('extraImages', item.extraImage);
@@ -133,9 +142,6 @@ export class RoundGateway {
     });
     room.gamestatus = 'in-progress';
     this.server.to(roomCode).emit('roundStarted', round);
-    client.emit('gameStarted', {
-      message: 'Game has been started sucessfully',
-    });
   }
 
   @SubscribeMessage('submitCaption')
@@ -258,6 +264,16 @@ export class RoundGateway {
       );
       console.log('arrangedPlayer is', arrangedPlayer);
       this.server.to(data.roomCode).emit('result', arrangedPlayer);
+      if (!room.currentRound) {
+        client.emit('appError', { message: 'NO such round available sorry' });
+      }
+      if (room?.currentRound?.roundNumber >= 7) {
+        room.gamestatus = 'completed';
+        this.server.to(data.roomCode).emit('finalScore', arrangedPlayer);
+      } else {
+        const round = this.roundService.handleNextRound(room);
+        this.broadCastMessage(room, data.roomCode, round);
+      }
     }
   }
 }
