@@ -14,15 +14,15 @@ Inspired by the Jackbox Party Pack format: one host creates a room, friends join
 
 One platform, multiple game modes, all sharing the same room infrastructure:
 
-| Game | Format | Status |
-| --- | --- | --- |
-| Make It Meme | Caption or react to memes | Concept — rules undecided |
-| Skribble | Draw & guess (skribbl.io-style) | Not started |
-| TikTok Comments Section | TBD | Concept only |
-| News | TBD | Concept only |
-| Fake Reviews | TBD | Concept only |
-| Imposter | Among Us-style hidden role/discussion | Not started |
-| Guess the Lie | Fibbage-style bluffing game | Not started |
+| Game                    | Format                                | Status                    |
+| ----------------------- | ------------------------------------- | ------------------------- |
+| Make It Meme            | Caption or react to memes             | Concept — rules undecided |
+| Skribble                | Draw & guess (skribbl.io-style)       | Not started               |
+| TikTok Comments Section | TBD                                   | Concept only              |
+| News                    | TBD                                   | Concept only              |
+| Fake Reviews            | TBD                                   | Concept only              |
+| Imposter                | Among Us-style hidden role/discussion | Not started               |
+| Guess the Lie           | Fibbage-style bluffing game           | Not started               |
 
 ## Architecture
 
@@ -55,10 +55,12 @@ This repo is a monorepo with two packages:
 ## Project Structure
 
     ```text
+
 lolby/
-├── backend/   # NestJS + Socket.io + Drizzle (API & realtime)
-└── frontend/  # React + Vite client
-```
+├── backend/ # NestJS + Socket.io + Drizzle (API & realtime)
+└── frontend/ # React + Vite client
+
+````
 
 ## Prerequisites
 
@@ -77,26 +79,26 @@ lolby/
    npm install
    # create a .env file with DATABASE_URL (and optional PORT, default 3000)
    npm run start:dev   # listens on http://localhost:3000
-   ```
+````
 
-   Example `.env`:
+Example `.env`:
 
-   ```bash
-   DATABASE_URL=postgres://user:password@localhost:5432/lolby
-   PORT=3000
-   ```
+```bash
+DATABASE_URL=postgres://user:password@localhost:5432/lolby
+PORT=3000
+```
 
-   Database migrations and meme-template seeding run automatically on startup (see `backend/README.md`).
+Database migrations and meme-template seeding run automatically on startup (see `backend/README.md`).
 
 3. Start the frontend (in a separate terminal):
 
-   ```bash
-   cd frontend
-   npm install
-   npm run dev   # Vite dev server on http://localhost:5173
-   ```
+    ```bash
+    cd frontend
+    npm install
+    npm run dev   # Vite dev server on http://localhost:5173
+    ```
 
-   The backend allows CORS from `http://localhost:5173` in development, so the frontend can talk to it directly.
+    The backend allows CORS from `http://localhost:5173` in development, so the frontend can talk to it directly.
 
 ## Build Order
 
@@ -110,6 +112,13 @@ lolby/
 - [ ] TikTok Comments Section / News / Fake Reviews: no defined mechanics yet
 - [ ] Game selection: does host pick a game per room, or is each game a separate room type/URL?
 - [ ] Meme template source: self-hosted DB + Cloudflare R2 (decided) — seeding script not yet wired to an npm script
+
+### UI Images
+
+![Screenshot](frontend/src/assets/screenshot/s1.png)
+![Screenshot](frontend/src/assets/screenshot/s2.png)
+![Screenshot](frontend/src/assets/screenshot/s3.png)
+![Screenshot](frontend/src/assets/screenshot/s4.png)
 
 ## License
 
