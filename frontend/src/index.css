@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "font1";
+  src: url("./assets/font/font1.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "font2";
+  src: url("./assets/font/font2.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "font3";
+  src: url("./assets/font/font3.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "font4";
+  src: url("./assets/font/font4.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "font5";
+  src: url("./assets/font/font5.woff2") format("woff2");
+}
