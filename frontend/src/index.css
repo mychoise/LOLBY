@@ -10,9 +10,30 @@
   src: url("./assets/font/font2.woff2") format("woff2");
 }
 
+/* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@font-face {
+  font-family: "font6";
+  src: url("assets/font/font6.woff2");
+}
 @font-face {
   font-family: "font3";
   src: url("./assets/font/font3.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "font7";
+  src: url("./assets/font/font7.woff2") format("woff2");
 }
 
 @font-face {
