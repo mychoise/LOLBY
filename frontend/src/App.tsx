@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "./components/Navbar";
 import CreateJoin from "./components/CreateJoin";
 import CaptionWriting from "./components/CaptionWriting";
+import Result from "./components/Result";
 
 const App = () => {
   return (
@@ -11,7 +12,8 @@ const App = () => {
         <CreateJoin />
       </div>*/}
       <div>
-        <CaptionWriting />
+        {/*<CaptionWriting />*/}
+        <Result />
       </div>
     </div>
   );
