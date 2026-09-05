@@ -1,8 +1,8 @@
-import React from "react";
 import Navbar from "./components/Navbar";
-import CreateJoin from "./components/CreateJoin";
-import CaptionWriting from "./components/CaptionWriting";
-import Result from "./components/Result";
+// import CreateJoin from "./components/CreateJoin";
+// import CaptionWriting from "./components/CaptionWriting";
+// import Result from "./components/Result";
+import Voting from "./components/Voting";
 
 const App = () => {
   return (
@@ -11,9 +11,10 @@ const App = () => {
       {/*<div>
         <CreateJoin />
       </div>*/}
-      <div>
+      <div className="h-screen">
         {/*<CaptionWriting />*/}
-        <Result />
+        {/*<Result />*/}
+        <Voting />
       </div>
     </div>
   );

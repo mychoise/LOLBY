@@ -1,4 +1,3 @@
-import React from "react";
 import { SquareTerminal, Ghost } from "lucide-react";
 
 const Navbar = () => {
