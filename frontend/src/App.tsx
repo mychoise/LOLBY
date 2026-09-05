@@ -11,7 +11,7 @@ const App = () => {
       {/*<div>
         <CreateJoin />
       </div>*/}
-      <div className="h-screen">
+      <div>
         {/*<CaptionWriting />*/}
         {/*<Result />*/}
         <Voting />
