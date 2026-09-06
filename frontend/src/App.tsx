@@ -2,7 +2,9 @@ import Navbar from "./components/Navbar";
 // import CreateJoin from "./components/CreateJoin";
 // import CaptionWriting from "./components/CaptionWriting";
 // import Result from "./components/Result";
-import Voting from "./components/Voting";
+// import Voting from "./components/Voting";
+import WaitingRoom from "./components/WaitingRoom";
+import Error from "./components/Error";
 
 const App = () => {
   return (
@@ -14,7 +16,9 @@ const App = () => {
       <div>
         {/*<CaptionWriting />*/}
         {/*<Result />*/}
-        <Voting />
+        {/*<Voting />*/}
+        {/*<WaitingRoom />*/}
+        <Error />
       </div>
     </div>
   );

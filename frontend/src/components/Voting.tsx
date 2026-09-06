@@ -20,8 +20,11 @@ const Voting = () => {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-row gap-7">
-          <div className="flex items-center hover:-translate-y-1 transition-all duration-300 hover:shadow-[7px_5px_0px_#ffb0cd] pt-5 gap-10 pb-5 justify-center flex-col w-90 h-auto border-3 border-[#574048] ">
+        <div
+          className="mt-10 flex flex-row
+            -7"
+        >
+          <div className="flex items-center hover:-translate-y-1 transition-aqll duration-300 hover:shadow-[7px_5px_0px_#ffb0cd] pt-5 gap-10 pb-5 justify-center flex-col w-90 h-auto border-3 border-[#574048] ">
             <div className="w-[90%] relative h-75 bg-yellow-400">
               <img
                 src="https://imgflip.com/s/meme/Cute-Cat.jpg"
