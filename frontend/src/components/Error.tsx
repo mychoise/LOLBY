@@ -1,4 +1,3 @@
-import React from "react";
 import { AlertTriangle, Rocket, X, Circle } from "lucide-react";
 
 export default function Error() {

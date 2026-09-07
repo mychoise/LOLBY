@@ -7,7 +7,6 @@ const Voting = () => {
         <h1 className="font-[font8] text-6xl tracking-tighter [text-shadow:0_0_0px_#fcaecb,0_0_20px_#fcaecb,0_0_0px_#fcaecb] text-[#ffb4ab]">
           VOTE OR DIE
         </h1>
-
         <div>
           <div className="flex items-center justify-between">
             <h1 className="uppercase rotate-2 text-[#aaaaaa] text-2xl font-[font6] ">
@@ -19,9 +18,9 @@ const Voting = () => {
             <div className="bg-[#ff3333] w-160 h-6"></div>
           </div>
         </div>
-
+        2
         <div
-          className="mt-10 flex flex-row
+          className="mt-10 flex gap-5 flex-row
             -7"
         >
           <div className="flex items-center hover:-translate-y-1 transition-aqll duration-300 hover:shadow-[7px_5px_0px_#ffb0cd] pt-5 gap-10 pb-5 justify-center flex-col w-90 h-auto border-3 border-[#574048] ">
@@ -44,11 +43,11 @@ const Voting = () => {
           <div className="flex items-center hover:-translate-y-1 transition-all duration-300 hover:shadow-[7px_5px_0px_#fdc700] pt-5 gap-10 pb-5 justify-center flex-col w-90 h-auto border-5 border-[#ffe083] ">
             <div className="w-[90%] relative h-75 bg-yellow-400">
               <img
-                src="https://imgflip.com/s/meme/Cute-Cat.jpg"
-                className="w-full h-full object-fill"
+                src="https://imgs.search.brave.com/j5dTeg-8VVppp_QvNf9TPsfenL1PqPP81WVccmX-i4M/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9hcGku/bWVtZXMuY28uaW4v/bWVkaWEvbWVtZXN2/aWRlby90aHVtYm5h/aWwvdGh1bWJuYWls/X3FOVEFIa3UucG5n"
+                className="w-full h-full"
               />
-              <h1 className="text-black text-center absolute bottom-0 font-[font4] text-[23px] tracking-tighter  font-extrabold">
-                When code works
+              <h1 className="text-blue-900 text-center absolute bottom-0 font-[font4] text-[23px] tracking-tighter  font-extrabold">
+                When code wonnnrks
               </h1>
             </div>
 
@@ -59,10 +58,10 @@ const Voting = () => {
           </div>
         </div>
       </div>
-      <div
+      {/*<div
         className="pointer-events-none absolute inset-0
                                       bg-[repeating-linear-gradient(0deg,rgba(7,15,33,0.6)_0px,rgba(7,15,33,0.6)_0px,rgba(7,15,33,0.6)_0px,rgba(7,15,33,0.6)_0px,rgba(7,15,33,0.6)_0px,rgba(7,15,33,0.6)_1px,transparent_0px,transparent_3.4px)]"
-      ></div>
+      ></div>*/}
     </div>
   );
 };
