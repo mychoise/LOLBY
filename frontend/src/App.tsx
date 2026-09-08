@@ -9,7 +9,7 @@ import Error from "./components/Error";
 
 const App = () => {
   return (
-    <div className="bg-[#000000] h-screen">
+    <div className="bg-[#000000] h-auto min-h-screen w-full text-white">
       <Navbar />
       <div>
         <Routes>
