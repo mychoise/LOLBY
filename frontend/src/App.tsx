@@ -6,8 +6,29 @@ import Result from "./components/Result";
 import Voting from "./components/Voting";
 import WaitingRoom from "./components/WaitingRoom";
 import Error from "./components/Error";
+import { socket } from "./lib/socket";
+import { useEffect } from "react";
 
 const App = () => {
+  const serverUrl = "http://localhost:3000";
+  useEffect(() => {
+    socket.connect();
+    function onConnect() {
+      console.log("Connected to server");
+      alert("connection sucess");
+    }
+    function onDisconnect() {
+      console.log("Disconnected from server");
+      alert("disconnection");
+    }
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, [serverUrl]);
   return (
     <div className="bg-[#000000] h-auto min-h-screen w-full text-white">
       <Navbar />

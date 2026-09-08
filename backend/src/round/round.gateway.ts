@@ -12,7 +12,12 @@ import { MemeService } from '../meme/meme.service';
 import { AllExceptionsFilter } from 'src/common/filters/ws-exception.filter';
 import { RoundService } from 'src/round/round.service';
 @UseFilters(AllExceptionsFilter)
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:5173', 'https://yourfrontend.com'],
+    credentials: true,
+  },
+})
 export class RoundGateway {
   @WebSocketServer()
   server: Server;
@@ -253,7 +258,6 @@ export class RoundGateway {
       data.votedForToken,
     );
     room.currentRound?.votes?.push(vote);
-    client.emit('votedPersonDetail', towhomvoted);
     client.emit('voteSubmitted', {
       message: 'Vote submitted successfully',
     });
@@ -267,7 +271,7 @@ export class RoundGateway {
       if (!room.currentRound) {
         client.emit('appError', { message: 'NO such round available sorry' });
       }
-      if (room?.currentRound?.roundNumber >= 7) {
+      if (room?.currentRound?.roundNumber! >= 7) {
         room.gamestatus = 'completed';
         this.server.to(data.roomCode).emit('finalScore', arrangedPlayer);
       } else {
