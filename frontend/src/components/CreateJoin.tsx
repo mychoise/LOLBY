@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { socket } from "../lib/socket";
 
 const CreateJoin = () => {
   // Create lobby
@@ -15,6 +16,10 @@ const CreateJoin = () => {
   const [joinCode, setJoinCode] = useState("");
   const [joinCodeFocused, setJoinCodeFocused] = useState(false);
   const joinCodeFloated = joinCodeFocused || joinCode.length > 0;
+
+  function handleCreateRoom() {
+    socket.emit("createRoom", { name: createName });
+  }
 
   return (
     <div className="w-screen items-center flex gap-20 justify-center pt-20">
@@ -73,7 +78,10 @@ const CreateJoin = () => {
             />
           </div>
 
-          <button className="bg-[#eec200] uppercase h-13 shadow-[4px_6px_0px_#ffb0cd] border rounded-4xl font-[font2] text-[#4c3d00] mt-8 w-[95%]">
+          <button
+            onClick={handleCreateRoom}
+            className="bg-[#eec200] uppercase h-13 shadow-[4px_6px_0px_#ffb0cd] border rounded-4xl font-[font2] text-[#4c3d00] mt-8 w-[95%]"
+          >
             Initialize Lobby
           </button>
         </div>
