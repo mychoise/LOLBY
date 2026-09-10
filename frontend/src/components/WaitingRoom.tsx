@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Users,
   Crown,
@@ -8,6 +8,7 @@ import {
   LogOut,
   Rocket,
 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const players = [
   {
@@ -119,8 +120,20 @@ function EmptySlot({ isInvite }) {
 }
 
 export default function WaitingRoom() {
+  const { roomId } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!roomId) {
+      navigate("/");
+    }
+  }, [roomId, navigate]);
+
   return (
     <div className="min-h-screen w-full bg-[#0b0e1a] px-4 py-10 font-sans text-white">
+      <div>
+        <h1 className="text-green-500">{roomId}</h1>
+      </div>
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8 flex flex-col items-center text-center">
@@ -138,7 +151,7 @@ export default function WaitingRoom() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/40 px-5 py-3">
             <span className="font-mono text-sm text-slate-400">
               ROOM CODE:{" "}
-              <span className="font-bold text-amber-400">#DANK-69420</span>
+              <span className="font-bold text-amber-400">{roomId}</span>
             </span>
             <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700">
               <Copy className="h-3.5 w-3.5" />

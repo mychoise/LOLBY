@@ -5,6 +5,7 @@ import { MemeService } from 'src/meme/meme.service';
 @Injectable()
 export class RoundService {
   constructor(private readonly memeService: MemeService) {}
+
   startGame(room: Room, host_id: string) {
     const players = room.players;
     if (room.host_id !== host_id) {
@@ -88,5 +89,15 @@ export class RoundService {
         ).length ?? 0;
       item.score += score * 121;
     });
+  }
+
+  handleCheckValidRoomId(room: Map<string, Room>, roomId: string): boolean {
+    if (roomId.length < 4) {
+      return false;
+    }
+    if (room.get(roomId)) {
+      return true;
+    }
+    return false;
   }
 }

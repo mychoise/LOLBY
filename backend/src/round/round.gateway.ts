@@ -11,6 +11,7 @@ import { Player, Room } from '../meme/meme.interface';
 import { MemeService } from '../meme/meme.service';
 import { AllExceptionsFilter } from 'src/common/filters/ws-exception.filter';
 import { RoundService } from 'src/round/round.service';
+import { RoomService } from 'src/room/room.service';
 @UseFilters(AllExceptionsFilter)
 @WebSocketGateway({
   cors: {
@@ -22,11 +23,11 @@ export class RoundGateway {
   @WebSocketServer()
   server: Server;
   private readonly logger = new Logger(RoundGateway.name);
-  private roomDetail = new Map<string, Room>();
 
   constructor(
     private readonly memeService: MemeService,
     private readonly roundService: RoundService,
+    private readonly roomSevice: RoomService,
   ) {}
 
   handleConnection(client: Socket) {
@@ -67,7 +68,7 @@ export class RoundGateway {
     };
     console.log('generated room token is', roomCode);
     console.log('host token is', user_token);
-    this.roomDetail.set(roomCode, payload);
+    this.roomSevice.createRoom(roomCode, payload);
     client.emit('roomGenerated', payload);
   }
 
@@ -79,7 +80,7 @@ export class RoundGateway {
     const roomCode = data.roomCode;
     console.log('received data is', data);
     console.log('received room code is', data.roomCode);
-    const room = this.roomDetail.get(roomCode);
+    const room = this.roomSevice.getRoom(roomCode);
     if (!room) {
       client.emit('appError', { message: 'Room not found' });
       return;
@@ -107,7 +108,7 @@ export class RoundGateway {
   ) {
     const roomCode = data.roomCode;
     console.log('roomcode is', roomCode);
-    const room = this.roomDetail.get(roomCode);
+    const room = this.roomSevice.getRoom(roomCode);
     if (!data.token) {
       console.log('token is required');
       client.emit('appError', { message: 'Token is required' });
@@ -160,7 +161,7 @@ export class RoundGateway {
       captionText: string;
     },
   ) {
-    const room = this.roomDetail.get(data.roomCode);
+    const room = this.roomSevice.getRoom(data.roomCode);
     if (!room) {
       client.emit('appError', { message: 'Room not found' });
       return;
@@ -228,7 +229,7 @@ export class RoundGateway {
       votedForToken: string;
     },
   ) {
-    const room = this.roomDetail.get(data.roomCode);
+    const room = this.roomSevice.getRoom(data.roomCode);
     if (!room) {
       client.emit('appError', { message: 'Room not found' });
       return;

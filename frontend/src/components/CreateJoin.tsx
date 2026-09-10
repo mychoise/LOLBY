@@ -17,6 +17,22 @@ const CreateJoin = () => {
   const [joinCodeFocused, setJoinCodeFocused] = useState(false);
   const joinCodeFloated = joinCodeFocused || joinCode.length > 0;
 
+  useEffect(() => {
+    function RoomGenerated(data) {
+      console.log("received data is", data);
+      if (data?.code) {
+        localStorage.setItem("token", data.code);
+      }
+      console.log("unable to get token from backend");
+      console.error("unable to get token from backend");
+    }
+    socket.on("roomGenerated", (data) => RoomGenerated(data));
+
+    return () => {
+      socket.off("roomGenerated");
+    };
+  }, []);
+
   function handleCreateRoom() {
     socket.emit("createRoom", { name: createName });
   }
