@@ -124,7 +124,7 @@ export default function WaitingRoom() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!roomId) {
+    if (!roomId || roomId.length < 4) {
       navigate("/");
     }
   }, [roomId, navigate]);
