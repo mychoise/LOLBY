@@ -1,6 +1,14 @@
 import { AlertTriangle, Rocket, X, Circle } from "lucide-react";
+import { useGame } from "../context/GameContext";
 
 export default function Error() {
+  const { leaveRoom, roomCode } = useGame();
+
+  const handleReboot = () => {
+    leaveRoom();
+  };
+
+
   return (
     <div className="flex w-full items-center justify-center bg-black px-4 py-10 font-mono text-white">
       <div className="relative w-full max-w-2xl rounded-2xl border border-emerald-500/60 bg-[#0a0e14] shadow-[0_0_40px_rgba(16,185,129,0.15)]">
@@ -51,7 +59,7 @@ export default function Error() {
 
           {/* Target room */}
           <p className="mt-6 text-sm text-fuchsia-400">
-            &gt; TARGET_ROOM: <span className="font-bold">#DANK-69420</span>{" "}
+            &gt; TARGET_ROOM: <span className="font-bold">#{roomCode || "DANK-69420"}</span>{" "}
             <span className="ml-1 rounded border border-red-500/60 bg-red-500/10 px-2 py-0.5 text-xs text-red-400">
               [OFFLINE]
             </span>
@@ -59,15 +67,22 @@ export default function Error() {
 
           {/* Buttons */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-            <button className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-pink-500 px-6 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-pink-900/30 transition-transform hover:scale-[1.03]">
+            <button
+              onClick={handleReboot}
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-pink-500 px-6 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-pink-900/30 transition-transform hover:scale-[1.03] cursor-pointer"
+            >
               REBOOT TO LOBBY
               <Rocket className="h-4 w-4" />
             </button>
-            <button className="inline-flex items-center gap-2 rounded-full border border-emerald-500/60 bg-transparent px-6 py-3 text-sm font-bold text-red-400 transition-colors hover:bg-emerald-500/10">
+            <button
+              onClick={handleReboot}
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-500/60 bg-transparent px-6 py-3 text-sm font-bold text-red-400 transition-colors hover:bg-emerald-500/10 cursor-pointer"
+            >
               HOST DROPPED
               <X className="h-4 w-4" />
             </button>
           </div>
+
 
           {/* Footer */}
           <div className="mt-8 flex w-full items-center justify-between border-t border-slate-800 pt-4 text-xs text-slate-500">

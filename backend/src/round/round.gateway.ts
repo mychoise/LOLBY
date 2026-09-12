@@ -69,6 +69,7 @@ export class RoundGateway {
     console.log('generated room token is', roomCode);
     console.log('host token is', user_token);
     this.roomSevice.createRoom(roomCode, payload);
+    client.join(roomCode);
     client.emit('roomGenerated', payload);
   }
 
@@ -219,7 +220,7 @@ export class RoundGateway {
     }
   }
 
-  @SubscribeMessage('sumbitVote')
+  @SubscribeMessage('submitVote')
   handleSubmitVote(
     @ConnectedSocket() client: Socket,
     @MessageBody()

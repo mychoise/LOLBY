@@ -6,30 +6,32 @@ import Result from "./components/Result";
 import Voting from "./components/Voting";
 import WaitingRoom from "./components/WaitingRoom";
 import Error from "./components/Error";
-import { socket } from "./lib/socket";
-import { useEffect } from "react";
+import { GameProvider, useGame } from "./context/GameContext";
+import { AlertCircle, X } from "lucide-react";
 
-const App = () => {
-  const serverUrl = "http://localhost:3000";
-  useEffect(() => {
-    socket.connect();
-    function onConnect() {
-      console.log("Connected to server");
-    }
-    function onDisconnect() {
-      console.log("Disconnected from server");
-    }
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
+const ErrorBanner = () => {
+  const { appError, clearError } = useGame();
+  if (!appError) return null;
 
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, [serverUrl]);
+  return (
+    <div className="fixed top-20 right-6 z-50 flex items-center gap-3 rounded-xl border-2 border-red-500 bg-[#16060c] px-5 py-3 shadow-[0_0_20px_rgba(239,68,68,0.4)] text-red-300 font-mono text-sm">
+      <AlertCircle className="h-5 w-5 text-red-400 shrink-0" />
+      <span>{appError}</span>
+      <button
+        onClick={clearError}
+        className="ml-2 rounded p-1 hover:bg-red-500/20 text-red-400"
+      >
+        <X size={16} />
+      </button>
+    </div>
+  );
+};
+
+const AppContent = () => {
   return (
     <div className="bg-[#000000] h-auto min-h-screen w-full text-white">
       <Navbar />
+      <ErrorBanner />
       <div>
         <Routes>
           <Route path="/" element={<CreateJoin />} />
@@ -44,4 +46,13 @@ const App = () => {
   );
 };
 
+const App = () => {
+  return (
+    <GameProvider>
+      <AppContent />
+    </GameProvider>
+  );
+};
+
 export default App;
+

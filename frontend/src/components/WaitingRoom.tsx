@@ -1,55 +1,30 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Users,
   Crown,
   Copy,
+  Check,
   Plus,
   Hourglass,
   LogOut,
   Rocket,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useGame, type Player } from "../context/GameContext";
 
-const players = [
-  {
-    slot: "Host",
-    isHost: true,
-    status: "Ready",
-    name: "MEMELORD_X...",
-    meta: "Lvl. 42 • Ping 18ms",
-    avatarBg: "from-pink-500 to-rose-600",
-    avatarIcon: "👑",
-  },
-  {
-    slot: "Slot #2",
-    isHost: false,
-    status: "Ready",
-    name: "DankVader",
-    meta: "Lvl. 27 • Ping 24ms",
-    avatarBg: "from-sky-400 to-indigo-500",
-    avatarIcon: "🐧",
-  },
-  {
-    slot: "Slot #3",
-    isHost: false,
-    status: "Ready",
-    name: "CringeConnois...",
-    meta: "Lvl. 35 • Ping 32ms",
-    avatarBg: "from-amber-400 to-orange-600",
-    avatarIcon: "🔥",
-  },
-  {
-    slot: "Slot #4",
-    isHost: false,
-    status: "Connecting...",
-    name: "NoobSlayer420",
-    meta: "Syncing assets...",
-    avatarBg: "from-violet-500 to-fuchsia-600",
-    avatarIcon: "⚡",
-  },
+
+const AVATAR_STYLES = [
+  { bg: "from-pink-500 to-rose-600", icon: "👑" },
+  { bg: "from-sky-400 to-indigo-500", icon: "🐧" },
+  { bg: "from-amber-400 to-orange-600", icon: "🔥" },
+  { bg: "from-violet-500 to-fuchsia-600", icon: "⚡" },
+  { bg: "from-emerald-400 to-teal-600", icon: "🤖" },
+  { bg: "from-cyan-400 to-blue-600", icon: "🚀" },
+  { bg: "from-purple-500 to-indigo-700", icon: "👾" },
+  { bg: "from-red-500 to-pink-600", icon: "🎯" },
 ];
 
-function StatusPill({ status }) {
+function StatusPill({ status }: { status: string }) {
   const isReady = status === "Ready";
   return (
     <span
@@ -65,47 +40,62 @@ function StatusPill({ status }) {
   );
 }
 
-function PlayerCard({ player }) {
+function PlayerCard({
+  player,
+  isHost,
+  index,
+}: {
+  player: Player;
+  isHost: boolean;
+  index: number;
+}) {
+  const style = AVATAR_STYLES[index % AVATAR_STYLES.length];
+
   return (
     <div
       className={`rounded-xl border p-4 ${
-        player.isHost
+        isHost
           ? "border-fuchsia-500/50 bg-fuchsia-500/[0.04]"
           : "border-slate-700/60 bg-slate-800/30"
       }`}
     >
       <div className="mb-3 flex items-center justify-between">
-        {player.isHost ? (
+        {isHost ? (
           <span className="inline-flex items-center gap-1 rounded-md bg-amber-400/90 px-2 py-0.5 text-xs font-bold text-slate-900">
             <Crown className="h-3 w-3" />
             Host
           </span>
         ) : (
           <span className="text-xs font-mono text-slate-400">
-            {player.slot}
+            Slot #{index + 1}
           </span>
         )}
-        <StatusPill status={player.status} />
+        <StatusPill status="Ready" />
       </div>
       <div className="flex items-center gap-3">
         <div
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${player.avatarBg} text-lg shadow-lg`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${style.bg} text-lg shadow-lg`}
         >
-          {player.avatarIcon}
+          {style.icon}
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-white">{player.name}</p>
-          <p className="truncate text-xs text-slate-400">{player.meta}</p>
+          <p className="truncate text-xs text-slate-400">
+            Score: {player.score} pts • Online
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-function EmptySlot({ isInvite }) {
+function EmptySlot({ isInvite, onClick }: { isInvite?: boolean; onClick?: () => void }) {
   if (isInvite) {
     return (
-      <button className="flex h-full min-h-[92px] w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-slate-700 text-slate-400 transition-colors hover:border-fuchsia-500/50 hover:text-fuchsia-400">
+      <button
+        onClick={onClick}
+        className="flex h-full min-h-[92px] w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-slate-700 text-slate-400 transition-colors hover:border-fuchsia-500/50 hover:text-fuchsia-400 cursor-pointer"
+      >
         <Plus className="h-4 w-4" />
         <span className="text-sm font-medium">+ Invite Player</span>
       </button>
@@ -122,45 +112,78 @@ function EmptySlot({ isInvite }) {
 export default function WaitingRoom() {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { players, isHost, startGame, leaveRoom, roomCode } = useGame();
+  const [copied, setCopied] = useState(false);
+
+  const activeRoomId = roomId || roomCode;
 
   useEffect(() => {
-    if (!roomId || roomId.length < 4) {
+    if (!activeRoomId || activeRoomId.length < 4) {
       navigate("/");
     }
-  }, [roomId, navigate]);
+  }, [activeRoomId, navigate]);
+
+  const handleCopyCode = () => {
+    if (activeRoomId) {
+      navigator.clipboard.writeText(activeRoomId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const maxSlots = 8;
+  const emptySlotsCount = Math.max(0, maxSlots - players.length);
+  const canStart = isHost && players.length >= 2;
 
   return (
     <div className="min-h-screen w-full bg-[#0b0e1a] px-4 py-10 font-sans text-white">
-      <div>
-        <h1 className="text-green-500">{roomId}</h1>
-      </div>
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8 flex flex-col items-center text-center">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/50 px-3 py-1 text-xs text-slate-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Waiting for players to ready up
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                players.length >= 2 ? "bg-emerald-400" : "bg-amber-400 animate-pulse"
+              }`}
+            />
+            {players.length >= 2
+              ? "Ready to launch match"
+              : "Waiting for players to join (Min 2 required)"}
           </span>
           <h1 className="text-4xl font-extrabold tracking-tight">
             Waiting Room
           </h1>
           <p className="mt-2 text-sm text-slate-400">
-            Match starts automatically once the host launches.
+            {isHost
+              ? "You are the Host. Launch when everyone is ready."
+              : "Waiting for the host to launch the match..."}
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/40 px-5 py-3">
             <span className="font-mono text-sm text-slate-400">
               ROOM CODE:{" "}
-              <span className="font-bold text-amber-400">{roomId}</span>
+              <span className="font-bold text-amber-400">{activeRoomId}</span>
             </span>
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700">
-              <Copy className="h-3.5 w-3.5" />
-              Copy Code
+            <button
+              onClick={handleCopyCode}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700 cursor-pointer"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="text-emerald-400">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5" />
+                  <span>Copy Code</span>
+                </>
+              )}
             </button>
             <span className="h-4 w-px bg-slate-700" />
             <span className="font-mono text-xs text-slate-400">
-              <span className="font-bold text-fuchsia-400">4</span> / 8 Players
-              Joined
+              <span className="font-bold text-fuchsia-400">{players.length}</span> /{" "}
+              {maxSlots} Players Joined
             </span>
           </div>
         </div>
@@ -173,41 +196,80 @@ export default function WaitingRoom() {
               <h2 className="text-sm font-bold">Players in Room</h2>
             </div>
             <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">
-              3 Ready • 1 Connecting
+              {players.length} Ready
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {players.map((p) => (
-              <PlayerCard key={p.name} player={p} />
+            {players.map((p, idx) => (
+              <PlayerCard
+                key={p.token || p.socket_id || idx}
+                player={p}
+                isHost={idx === 0}
+                index={idx}
+              />
             ))}
-            <EmptySlot isInvite />
-            <EmptySlot />
-            <EmptySlot />
-            <EmptySlot />
+            {emptySlotsCount > 0 && (
+              <EmptySlot isInvite onClick={handleCopyCode} />
+            )}
+            {Array.from({ length: Math.max(0, emptySlotsCount - 1) }).map(
+              (_, i) => (
+                <EmptySlot key={i} />
+              )
+            )}
           </div>
         </div>
 
         {/* Footer bar */}
         <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 px-6 py-4 sm:flex-row">
           <div className="flex items-center gap-3">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span
+              className={`h-2 w-2 rounded-full ${
+                canStart ? "bg-emerald-400" : "bg-amber-400 animate-pulse"
+              }`}
+            />
             <div>
-              <p className="text-sm font-bold">Ready to start match</p>
+              <p className="text-sm font-bold">
+                {isHost
+                  ? canStart
+                    ? "Ready to start match"
+                    : "Need at least 2 players to start"
+                  : "Waiting for host"}
+              </p>
               <p className="text-xs text-slate-400">
-                Minimum 2 players required. You have host authority.
+                {isHost
+                  ? "Minimum 2 players required. You have host authority."
+                  : "Match will begin automatically when host launches."}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-700">
+            <button
+              onClick={leaveRoom}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-700 cursor-pointer"
+            >
               <LogOut className="h-3.5 w-3.5" />
               Leave Room
             </button>
-            <button className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-pink-900/30 transition-transform hover:scale-[1.02]">
-              Start Match
-              <Rocket className="h-3.5 w-3.5" />
-            </button>
+            {isHost ? (
+              <button
+                disabled={!canStart}
+                onClick={startGame}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-sm font-bold text-white shadow-lg transition-transform ${
+                  canStart
+                    ? "bg-gradient-to-r from-pink-600 to-rose-500 shadow-pink-900/30 hover:scale-[1.02] cursor-pointer"
+                    : "bg-gray-700 opacity-50 cursor-not-allowed"
+                }`}
+              >
+                Start Match
+                <Rocket className="h-3.5 w-3.5" />
+              </button>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-400 bg-slate-800/50 rounded-lg border border-slate-700">
+                <Hourglass className="h-4 w-4 animate-spin text-amber-400" />
+                Waiting for Host...
+              </div>
+            )}
           </div>
         </div>
 

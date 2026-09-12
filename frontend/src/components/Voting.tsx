@@ -1,108 +1,181 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  ChevronUp,
-  ChevronDown,
-  Flag,
-  Download,
-  Star,
-  MessageCircle,
-  Volume2,
-  Settings,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+  Hourglass,
+  Sparkles,
 } from "lucide-react";
+import { useGame } from "../context/GameContext";
 
-export default function MemeArenaUI() {
-  const [reaction, setReaction] = useState(1); // index of selected reaction emoji
-  const [vote, setVote] = useState("dank"); // 'dank' | 'meh' | 'cringe'
+export default function Voting() {
+  const {
+    votingImages,
+    submitVote,
+    hasSubmittedVote,
+    currentRound,
+  } = useGame();
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [, setSelectedSubmissionId] = useState<string>("");
+
+  const activeSubmission =
+    votingImages.length > 0
+      ? votingImages[Math.min(currentIndex, votingImages.length - 1)]
+      : null;
+
+  const handleSelectAndVote = (submissionId: string) => {
+    if (hasSubmittedVote || !submissionId) return;
+    setSelectedSubmissionId(submissionId);
+    submitVote(submissionId);
+  };
+
+
+  const handleNext = () => {
+    if (currentIndex < votingImages.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const roundNum = currentRound?.roundNumber
+    ? String(currentRound.roundNumber).padStart(2, "0")
+    : "01";
+
+  if (!activeSubmission) {
+    return (
+      <div className="min-h-screen w-full bg-[#120b2e] flex flex-col items-center justify-center py-6 px-4 font-sans text-white">
+        <div className="flex flex-col items-center gap-4 bg-[#0e0b26] p-8 rounded-2xl border border-cyan-400/50 shadow-[0_0_25px_rgba(34,211,238,0.15)] max-w-md text-center">
+          <Hourglass className="h-8 w-8 animate-spin text-amber-400" />
+          <h2 className="text-xl font-bold font-mono text-cyan-300">
+            AWAITING ARENA FEED...
+          </h2>
+          <p className="text-sm text-slate-400">
+            Captions are being compiled by the mainframe. Voting will begin shortly.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen w-full bg-[#120b2e] flex flex-col items-center py-6 px-4 font-sans">
+    <div className="min-h-screen w-full bg-[#120b2e] flex flex-col items-center py-6 px-4 font-sans text-white">
       {/* Card */}
       <div className="w-full max-w-2xl rounded-2xl border border-cyan-400/60 shadow-[0_0_25px_rgba(34,211,238,0.15)] bg-[#0e0b26] overflow-hidden">
         {/* Top status bar */}
         <div className="flex items-center justify-between px-4 py-2 border-b border-cyan-400/30">
           <div className="flex items-center gap-2 text-cyan-300 text-xs tracking-wide font-mono">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(52,211,153,0.7)]" />
-            <span>&gt; ARENA_FEED.EXE // ROUND_03</span>
+            <span>&gt; ARENA_FEED.EXE // ROUND_{roundNum}</span>
           </div>
-          <div className="flex items-center gap-1 text-rose-400 text-xs font-mono">
-            <span className="inline-block w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <span>TELEMETRY: LIVE</span>
+          <div className="flex items-center gap-2 text-xs font-mono">
+            {votingImages.length > 1 && (
+              <span className="text-amber-400 font-bold">
+                [{currentIndex + 1} / {votingImages.length}]
+              </span>
+            )}
+            <div className="flex items-center gap-1 text-rose-400">
+              <span className="inline-block w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <span>VOTING: LIVE</span>
+            </div>
           </div>
         </div>
 
         {/* Meme content */}
         <div className="p-5">
-          {/* Top caption */}
-          <div className="mb-3 border-2 border-amber-400 bg-black">
-            <p className="text-center text-white font-extrabold uppercase italic text-lg py-3 px-4 tracking-tight">
-              "Hear me out: Q3 strategy is simple…"
+          {/* Top banner */}
+          <div className="mb-3 border-2 border-amber-400 bg-black py-2 px-4 text-center">
+            <p className="text-amber-300 font-[font6] uppercase text-sm tracking-wider">
+              {hasSubmittedVote
+                ? "YOUR VOTE IS RECORDED"
+                : "INSPECT SUBMISSION & CAST YOUR VOTE"}
             </p>
           </div>
 
-          {/* Image placeholder area */}
-          <div className="relative w-full aspect-[16/10] bg-gradient-to-b from-[#3a3550] to-[#1c1830] flex items-center justify-center overflow-hidden rounded-sm">
-            <img src="https://imgs.search.brave.com/AEP7MO5nvSbl9n0MM1Uh1Is00j1eIaWwzw38NekCBD4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYXJr/ZXRwbGFjZS5jYW52/YS5jb20vMlMzV0Ev/TUFFSmxNMlMzV0Ev/MS90bC9jYW52YS1o/YW5kc29tZS1hZnJp/Y2FuLW1hbi1sYXVn/aGluZy1vdXQtbG91/ZC1hdC1mdW5ueS1t/ZW1lLW9yLWpva2Ut/aGUtZm91bmQtb24t/aW50ZXJuZXQsLXNt/aWxpbmctYnJvYWRs/eS4tTUFFSmxNMlMz/V0EuanBn" />
+          {/* Image & Caption Display */}
+          <div className="relative w-full aspect-[16/10] bg-gradient-to-b from-[#3a3550] to-[#1c1830] flex items-center justify-center overflow-hidden rounded-lg border border-slate-700">
+            <img
+              src={activeSubmission.imageUrl}
+              alt="Meme to vote on"
+              className="w-full h-full object-contain bg-black"
+            />
             {/* Bottom overlay caption */}
-            <div className="absolute bottom-0 left-0 right-0 bg-black/40 py-3 px-4">
-              <p className="text-center text-amber-300 font-extrabold uppercase italic text-lg leading-tight drop-shadow-[0_2px_2px_rgba(0,0,0,0.9)]">
-                Me explaining to the board why we spent 90% of
-                <br />
-                the budget on tennis balls
+            <div className="absolute bottom-0 left-0 right-0 bg-black/75 py-3 px-4 text-center border-t border-amber-400/40">
+              <p className="text-white font-extrabold uppercase italic text-lg sm:text-xl leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] break-words">
+                {activeSubmission.captionText}
               </p>
             </div>
+
+            {/* Navigation arrows if multiple submissions */}
+            {votingImages.length > 1 && (
+              <>
+                <button
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 p-2 rounded-full border border-cyan-400/50 hover:bg-black/90 disabled:opacity-30 cursor-pointer"
+                >
+                  <ChevronLeft className="h-6 w-6 text-cyan-300" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={currentIndex === votingImages.length - 1}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 p-2 rounded-full border border-cyan-400/50 hover:bg-black/90 disabled:opacity-30 cursor-pointer"
+                >
+                  <ChevronRight className="h-6 w-6 text-cyan-300" />
+                </button>
+              </>
+            )}
           </div>
 
           {/* Controls row */}
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            {/* Dank / Meh / Cringe */}
-            <div className="flex flex-1 gap-2 min-w-[260px]">
-              <button
-                onClick={() => setVote("dank")}
-                className={`flex-1 flex items-center justify-center gap-1 rounded-md py-3 font-bold text-sm tracking-wide border-2 transition
-                  ${
-                    vote === "dank"
-                      ? "bg-emerald-400 text-emerald-950 border-emerald-300"
-                      : "bg-emerald-500/80 text-emerald-950 border-emerald-400/60"
-                  }
-                `}
-              >
-                <ChevronUp size={16} strokeWidth={3} /> DANK
-              </button>
+          <div className="mt-5 flex flex-col gap-3">
+            {!hasSubmittedVote ? (
+              <div className="flex flex-col sm:flex-row gap-3 items-center">
+                <button
+                  onClick={() => handleSelectAndVote(activeSubmission.submissionId)}
+                  className="w-full flex-1 flex items-center justify-center gap-2 rounded-xl py-4 font-bold text-lg tracking-wider border-2 transition-all bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.4)] cursor-pointer active:scale-98"
+                >
+                  <Sparkles size={20} strokeWidth={2.5} />
+                  VOTE THIS DANK (+121 PTS)
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-4 bg-emerald-950/40 border border-emerald-500/60 rounded-xl">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold font-mono">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span>VOTE RECORDED (+121 POINTS SENT)</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-mono mt-1.5">
+                  <Hourglass className="h-3.5 w-3.5 animate-spin text-amber-400" />
+                  <span>Waiting for other hackers to finish voting...</span>
+                </div>
+              </div>
+            )}
 
-              <button
-                onClick={() => setVote("meh")}
-                className={`flex-1 flex flex-col items-center justify-center rounded-md py-2 font-mono border-2 transition
-                  ${
-                    vote === "meh"
-                      ? "bg-slate-500 text-slate-100 border-slate-300"
-                      : "bg-slate-700/80 text-slate-200 border-slate-500/60"
-                  }
-                `}
-              >
-                <span className="text-sm">¯\_(ツ)_/¯</span>
-                <span className="text-[10px] tracking-widest">MEH</span>
-              </button>
-
-              <button
-                onClick={() => setVote("cringe")}
-                className={`flex-1 flex items-center justify-center gap-1 rounded-md py-3 font-bold text-sm tracking-wide border-2 transition
-                  ${
-                    vote === "cringe"
-                      ? "bg-rose-500 text-white border-rose-300"
-                      : "bg-rose-600/80 text-white border-rose-400/60"
-                  }
-                `}
-              >
-                <ChevronDown size={16} strokeWidth={3} /> CRINGE
-              </button>
-            </div>
+            {/* Thumbnail dots if multiple submissions */}
+            {votingImages.length > 1 && (
+              <div className="flex justify-center gap-2 mt-2">
+                {votingImages.map((sub, idx) => (
+                  <button
+                    key={sub.submissionId || idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      currentIndex === idx
+                        ? "w-8 bg-cyan-400"
+                        : "w-2.5 bg-slate-700 hover:bg-slate-500"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-
-          {/* Bottom actions row */}
         </div>
       </div>
-
-      {/* Bottom chat bar */}
     </div>
   );
 }

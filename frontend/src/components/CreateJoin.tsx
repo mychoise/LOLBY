@@ -1,8 +1,10 @@
 import { ChevronRight } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { socket } from "../lib/socket";
+import { useState } from "react";
+import { useGame } from "../context/GameContext";
 
 const CreateJoin = () => {
+  const { createRoom, joinRoom } = useGame();
+
   // Create lobby
   const [createName, setCreateName] = useState("");
   const [createNameFocused, setCreateNameFocused] = useState(false);
@@ -17,24 +19,12 @@ const CreateJoin = () => {
   const [joinCodeFocused, setJoinCodeFocused] = useState(false);
   const joinCodeFloated = joinCodeFocused || joinCode.length > 0;
 
-  useEffect(() => {
-    function RoomGenerated(data) {
-      console.log("received data is", data);
-      if (data?.code) {
-        localStorage.setItem("token", data.code);
-      }
-      console.log("unable to get token from backend");
-      console.error("unable to get token from backend");
-    }
-    socket.on("roomGenerated", (data) => RoomGenerated(data));
-
-    return () => {
-      socket.off("roomGenerated");
-    };
-  }, []);
-
   function handleCreateRoom() {
-    socket.emit("createRoom", { name: createName });
+    createRoom(createName);
+  }
+
+  function handleJoinRoom() {
+    joinRoom(joinName, joinCode);
   }
 
   return (
@@ -68,7 +58,7 @@ const CreateJoin = () => {
               className="absolute left-4 font-[font4] tracking-widest pointer-events-none transition-all duration-200 ease-out"
               style={{
                 color: createNameFloated ? "#f7e017" : "#39e639",
-                textShadow: createNameFloated && "0 0 4px rgba(247,224,23,0.6)",
+                textShadow: createNameFloated ? "0 0 4px rgba(247,224,23,0.6)" : undefined,
                 top: createNameFloated ? "6px" : "50%",
                 transform: createNameFloated
                   ? "translateY(0)"
@@ -76,6 +66,7 @@ const CreateJoin = () => {
                 fontSize: createNameFloated ? "0.65rem" : "1rem",
               }}
             >
+
               MEME NAME
             </label>
 
@@ -85,6 +76,9 @@ const CreateJoin = () => {
               onChange={(e) => setCreateName(e.target.value)}
               onFocus={() => setCreateNameFocused(true)}
               onBlur={() => setCreateNameFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleCreateRoom();
+              }}
               className="relative h-full w-full bg-transparent px-4 pt-4 font-mono text-lg tracking-widest outline-none"
               style={{
                 color: "#31d815",
@@ -96,10 +90,11 @@ const CreateJoin = () => {
 
           <button
             onClick={handleCreateRoom}
-            className="bg-[#eec200] uppercase h-13 shadow-[4px_6px_0px_#ffb0cd] border rounded-4xl font-[font2] text-[#4c3d00] mt-8 w-[95%]"
+            className="bg-[#eec200] cursor-pointer hover:brightness-110 active:scale-95 transition-all uppercase h-13 shadow-[4px_6px_0px_#ffb0cd] border rounded-4xl font-[font2] text-[#4c3d00] mt-8 w-[95%]"
           >
             Initialize Lobby
           </button>
+
         </div>
         <div
           className="pointer-events-none absolute inset-0
@@ -141,7 +136,7 @@ const CreateJoin = () => {
               className="absolute left-4 font-[font4] tracking-widest pointer-events-none transition-all duration-200 ease-out"
               style={{
                 color: joinNameFloated ? "#f7e017" : "#39e639",
-                textShadow: joinNameFloated && "0 0 4px rgba(247,224,23,0.6)",
+                textShadow: joinNameFloated ? "0 0 4px rgba(247,224,23,0.6)" : undefined,
                 top: joinNameFloated ? "6px" : "50%",
                 transform: joinNameFloated
                   ? "translateY(0)"
@@ -183,7 +178,7 @@ const CreateJoin = () => {
               className="absolute left-4 font-[font4] tracking-widest pointer-events-none transition-all duration-200 ease-out"
               style={{
                 color: joinCodeFloated ? "#f7e017" : "#39e639",
-                textShadow: joinCodeFloated && "0 0 4px rgba(247,224,23,0.6)",
+                textShadow: joinCodeFloated ? "0 0 4px rgba(247,224,23,0.6)" : undefined,
                 top: joinCodeFloated ? "6px" : "50%",
                 transform: joinCodeFloated
                   ? "translateY(0)"
@@ -191,16 +186,21 @@ const CreateJoin = () => {
                 fontSize: joinCodeFloated ? "0.65rem" : "1rem",
               }}
             >
+
               6-DIGIT CODE
             </label>
 
             <input
-              type="number"
+              type="text"
+              maxLength={6}
               value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value)}
+              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
               onFocus={() => setJoinCodeFocused(true)}
               onBlur={() => setJoinCodeFocused(false)}
-              className="relative h-full w-full bg-transparent px-4 pt-4 font-mono text-lg tracking-widest outline-none"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleJoinRoom();
+              }}
+              className="relative h-full w-full bg-transparent px-4 pt-4 font-mono text-lg tracking-widest outline-none uppercase"
               style={{
                 color: "#31d815",
                 textShadow: "0 0 4px rgba(57,230,57,0.6)",
@@ -209,9 +209,13 @@ const CreateJoin = () => {
             />
           </div>
 
-          <button className="bg-[#f751a1] uppercase h-13 shadow-[4px_6px_0px_#eec200] border rounded-4xl font-[font2] text-[#4c3d00] mt-8 w-[95%]">
+          <button
+            onClick={handleJoinRoom}
+            className="bg-[#f751a1] cursor-pointer hover:brightness-110 active:scale-95 transition-all uppercase h-13 shadow-[4px_6px_0px_#eec200] border rounded-4xl font-[font2] text-[#4c3d00] mt-8 w-[95%]"
+          >
             Breach Mainframe
           </button>
+
         </div>
         <div
           className="pointer-events-none absolute inset-0

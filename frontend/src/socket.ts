@@ -1,7 +1,2 @@
-import { io } from "socket.io-client";
+export { socket } from "./lib/socket";
 
-export const socket = io("https://lolby-production.up.railway.app", {
-  withCredentials: true,
-  transports: ["polling", "websocket"],
-  autoConnect: true,
-});
