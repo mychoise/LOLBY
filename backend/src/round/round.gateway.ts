@@ -76,7 +76,7 @@ export class RoundGateway {
   @SubscribeMessage('joinRoom')
   handleJoinRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { name: string; roomCode: string },
+    @MessageBody() data: { name: string; roomCode: string; token?: string },
   ) {
     const roomCode = data.roomCode;
     console.log('received data is', data);
@@ -87,6 +87,24 @@ export class RoundGateway {
       return;
     }
     const socketId = client.id;
+
+    // If player token was provided and player already exists in the room, re-attach socket
+    if (data.token) {
+      const existingPlayer = room.players.find((p) => p.token === data.token);
+      if (existingPlayer) {
+        existingPlayer.socket_id = socketId;
+        if (data.name) {
+          existingPlayer.name = data.name;
+        }
+        client.join(roomCode);
+        client.emit('joinedRoom', existingPlayer.token);
+        this.server.to(roomCode).emit('playerListUpdated', {
+          players: room.players,
+        });
+        return;
+      }
+    }
+
     const userToken = Math.random().toString(36).substring(2, 8).toUpperCase();
     const payload: Player = {
       socket_id: socketId,
@@ -205,12 +223,20 @@ export class RoundGateway {
     if (this.roundService.handlecheckForSubmission(room)) {
       room.players.map((item) => {
         const images = room.currentRound?.submissions;
+        console.log('current round submission', images);
+
         const actualImage = images
           ?.filter((value) => value.playerToken !== item.token)
           .map((value2) => {
+            const author = room.players.find(
+              (p) => p.token === value2.playerToken,
+            );
+            const match = author?.memeTemplate?.find(
+              (t) => t.id === value2.templateId,
+            );
             return {
               submissionId: value2.playerToken,
-              imageUrl: item.currentRoundImage?.image_url,
+              imageUrl: match?.image_url,
               captionText: value2.captionText,
             };
           });

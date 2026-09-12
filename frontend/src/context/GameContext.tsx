@@ -69,17 +69,31 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const navigate = useNavigate();
 
+  // Helper to read stored values (localStorage prioritized, then sessionStorage)
+  const getStoredValue = (key: string): string => {
+    return localStorage.getItem(key) || sessionStorage.getItem(key) || "";
+  };
+
+  const getStoredToken = (): string => {
+    return (
+      localStorage.getItem("lolby_player_token") ||
+      localStorage.getItem("user_token") ||
+      sessionStorage.getItem("lolby_player_token") ||
+      ""
+    );
+  };
+
   const [roomCode, setRoomCode] = useState<string>(
-    () => sessionStorage.getItem("lolby_room_code") || ""
+    () => getStoredValue("lolby_room_code")
   );
   const [playerToken, setPlayerToken] = useState<string>(
-    () => sessionStorage.getItem("lolby_player_token") || ""
+    () => getStoredToken()
   );
   const [playerName, setPlayerName] = useState<string>(
-    () => sessionStorage.getItem("lolby_player_name") || ""
+    () => getStoredValue("lolby_player_name")
   );
   const [isHost, setIsHost] = useState<boolean>(
-    () => sessionStorage.getItem("lolby_is_host") === "true"
+    () => getStoredValue("lolby_is_host") === "true"
   );
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentRound, setCurrentRound] = useState<RoundInfo | null>(null);
@@ -95,15 +109,24 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
     useState<boolean>(false);
   const [hasSubmittedVote, setHasSubmittedVote] = useState<boolean>(false);
 
-  // Sync session storage
+  // Sync session & local storage
   const updateSession = useCallback(
     (code: string, token: string, name: string, host: boolean) => {
       setRoomCode(code);
       setPlayerToken(token);
       setPlayerName(name);
       setIsHost(host);
-      sessionStorage.setItem("lolby_room_code", code);
+
+      // Save token and room info to localStorage
+      localStorage.setItem("lolby_player_token", token);
+      localStorage.setItem("user_token", token);
+      localStorage.setItem("lolby_room_code", code);
+      localStorage.setItem("lolby_player_name", name);
+      localStorage.setItem("lolby_is_host", host ? "true" : "false");
+
+      // Sync to sessionStorage
       sessionStorage.setItem("lolby_player_token", token);
+      sessionStorage.setItem("lolby_room_code", code);
       sessionStorage.setItem("lolby_player_name", name);
       sessionStorage.setItem("lolby_is_host", host ? "true" : "false");
     },
@@ -123,6 +146,15 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
     setIsGameOver(false);
     setHasSubmittedCaption(false);
     setHasSubmittedVote(false);
+
+    // Clear localStorage
+    localStorage.removeItem("lolby_player_token");
+    localStorage.removeItem("user_token");
+    localStorage.removeItem("lolby_room_code");
+    localStorage.removeItem("lolby_player_name");
+    localStorage.removeItem("lolby_is_host");
+
+    // Clear sessionStorage
     sessionStorage.removeItem("lolby_room_code");
     sessionStorage.removeItem("lolby_player_token");
     sessionStorage.removeItem("lolby_player_name");
@@ -153,23 +185,31 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
         return;
       }
       const upperCode = code.trim().toUpperCase();
+      const existingToken = playerToken || getStoredToken();
       setPlayerName(name);
       setRoomCode(upperCode);
-      socket.emit("joinRoom", { name: name.trim(), roomCode: upperCode });
+      socket.emit("joinRoom", {
+        name: name.trim(),
+        roomCode: upperCode,
+        ...(existingToken ? { token: existingToken } : {}),
+      });
     },
-    []
+    [playerToken]
   );
 
   const startGame = useCallback(() => {
-    if (!roomCode || !playerToken) {
+    const activeToken = playerToken || getStoredToken();
+    if (!roomCode || !activeToken) {
       setAppError("Missing room code or player token to start");
       return;
     }
-    socket.emit("startGame", { roomCode, token: playerToken });
+    // Backend expects 'token' property
+    socket.emit("startGame", { roomCode, token: activeToken });
   }, [roomCode, playerToken]);
 
   const submitCaption = useCallback(
     (captionText: string) => {
+      const activeToken = playerToken || getStoredToken();
       if (!currentRoundImage?.id) {
         setAppError("No meme template loaded for this round");
         return;
@@ -178,9 +218,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
         setAppError("Please enter a caption");
         return;
       }
+      if (!activeToken) {
+        setAppError("Player token missing. Please re-join the room.");
+        return;
+      }
+      // Backend expects 'playerToken' property
       socket.emit("submitCaption", {
         roomCode,
-        playerToken,
+        playerToken: activeToken,
         imageId: currentRoundImage.id,
         captionText: captionText.trim(),
       });
@@ -190,13 +235,19 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
 
   const submitVote = useCallback(
     (votedForToken: string) => {
+      const activeToken = playerToken || getStoredToken();
       if (!votedForToken) {
         setAppError("Please select a meme to vote for");
         return;
       }
+      if (!activeToken) {
+        setAppError("Voter token missing. Please re-join the room.");
+        return;
+      }
+      // Backend expects 'voterToken' property
       socket.emit("submitVote", {
         roomCode,
-        voterToken: playerToken,
+        voterToken: activeToken,
         votedForToken,
       });
     },

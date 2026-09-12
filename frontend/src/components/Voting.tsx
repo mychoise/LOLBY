@@ -9,16 +9,13 @@ import {
 import { useGame } from "../context/GameContext";
 
 export default function Voting() {
-  const {
-    votingImages,
-    submitVote,
-    hasSubmittedVote,
-    currentRound,
-  } = useGame();
+  const { votingImages, submitVote, hasSubmittedVote, currentRound } =
+    useGame();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [, setSelectedSubmissionId] = useState<string>("");
 
+  console.log("voting images are", votingImages);
   const activeSubmission =
     votingImages.length > 0
       ? votingImages[Math.min(currentIndex, votingImages.length - 1)]
@@ -29,7 +26,6 @@ export default function Voting() {
     setSelectedSubmissionId(submissionId);
     submitVote(submissionId);
   };
-
 
   const handleNext = () => {
     if (currentIndex < votingImages.length - 1) {
@@ -56,7 +52,8 @@ export default function Voting() {
             AWAITING ARENA FEED...
           </h2>
           <p className="text-sm text-slate-400">
-            Captions are being compiled by the mainframe. Voting will begin shortly.
+            Captions are being compiled by the mainframe. Voting will begin
+            shortly.
           </p>
         </div>
       </div>
@@ -137,7 +134,9 @@ export default function Voting() {
             {!hasSubmittedVote ? (
               <div className="flex flex-col sm:flex-row gap-3 items-center">
                 <button
-                  onClick={() => handleSelectAndVote(activeSubmission.submissionId)}
+                  onClick={() =>
+                    handleSelectAndVote(activeSubmission.submissionId)
+                  }
                   className="w-full flex-1 flex items-center justify-center gap-2 rounded-xl py-4 font-bold text-lg tracking-wider border-2 transition-all bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.4)] cursor-pointer active:scale-98"
                 >
                   <Sparkles size={20} strokeWidth={2.5} />
