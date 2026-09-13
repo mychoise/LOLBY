@@ -136,11 +136,11 @@ export default function WaitingRoom() {
   const canStart = isHost && players.length >= 2;
 
   return (
-    <div className="min-h-screen w-full bg-[#0b0e1a] px-4 py-10 font-sans text-white">
+    <div className="min-h-screen w-full bg-[#0b0e1a] px-3 sm:px-6 py-6 sm:py-10 font-sans text-white">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-8 flex flex-col items-center text-center">
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/50 px-3 py-1 text-xs text-slate-300">
+        <div className="mb-6 sm:mb-8 flex flex-col items-center text-center">
+          <span className="mb-3 sm:mb-4 inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/50 px-3 py-1 text-xs text-slate-300">
             <span
               className={`h-1.5 w-1.5 rounded-full ${
                 players.length >= 2 ? "bg-emerald-400" : "bg-amber-400 animate-pulse"
@@ -150,23 +150,23 @@ export default function WaitingRoom() {
               ? "Ready to launch match"
               : "Waiting for players to join (Min 2 required)"}
           </span>
-          <h1 className="text-4xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
             Waiting Room
           </h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-400">
             {isHost
               ? "You are the Host. Launch when everyone is ready."
               : "Waiting for the host to launch the match..."}
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/40 px-5 py-3">
-            <span className="font-mono text-sm text-slate-400">
+          <div className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 rounded-xl border border-slate-700/60 bg-slate-800/40 px-3.5 sm:px-5 py-2.5 sm:py-3">
+            <span className="font-mono text-xs sm:text-sm text-slate-400">
               ROOM CODE:{" "}
-              <span className="font-bold text-amber-400">{activeRoomId}</span>
+              <span className="font-bold text-amber-400 tracking-wider">{activeRoomId}</span>
             </span>
             <button
               onClick={handleCopyCode}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/80 px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700 cursor-pointer"
             >
               {copied ? (
                 <>
@@ -180,7 +180,7 @@ export default function WaitingRoom() {
                 </>
               )}
             </button>
-            <span className="h-4 w-px bg-slate-700" />
+            <span className="hidden sm:inline-block h-4 w-px bg-slate-700" />
             <span className="font-mono text-xs text-slate-400">
               <span className="font-bold text-fuchsia-400">{players.length}</span> /{" "}
               {maxSlots} Players Joined
@@ -189,18 +189,18 @@ export default function WaitingRoom() {
         </div>
 
         {/* Players panel */}
-        <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-6">
-          <div className="mb-4 flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 sm:p-6">
+          <div className="mb-4 flex items-center justify-between border-b border-slate-800 pb-3 sm:pb-4">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-fuchsia-400" />
               <h2 className="text-sm font-bold">Players in Room</h2>
             </div>
-            <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">
+            <span className="rounded-full bg-emerald-500/15 px-2.5 sm:px-3 py-1 text-xs font-semibold text-emerald-400">
               {players.length} Ready
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {players.map((p, idx) => (
               <PlayerCard
                 key={p.token || p.socket_id || idx}
@@ -221,32 +221,32 @@ export default function WaitingRoom() {
         </div>
 
         {/* Footer bar */}
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 px-6 py-4 sm:flex-row">
-          <div className="flex items-center gap-3">
+        <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 sm:px-6 sm:py-4 md:flex-row">
+          <div className="flex items-center gap-3 text-center md:text-left">
             <span
-              className={`h-2 w-2 rounded-full ${
+              className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                 canStart ? "bg-emerald-400" : "bg-amber-400 animate-pulse"
               }`}
             />
             <div>
-              <p className="text-sm font-bold">
+              <p className="text-xs sm:text-sm font-bold">
                 {isHost
                   ? canStart
                     ? "Ready to start match"
                     : "Need at least 2 players to start"
                   : "Waiting for host"}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400">
                 {isHost
                   ? "Minimum 2 players required. You have host authority."
                   : "Match will begin automatically when host launches."}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 w-full sm:w-auto">
             <button
               onClick={leaveRoom}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-700 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-600/60 bg-slate-800/60 px-4 py-2 text-xs sm:text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-700 cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5" />
               Leave Room
@@ -255,7 +255,7 @@ export default function WaitingRoom() {
               <button
                 disabled={!canStart}
                 onClick={startGame}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-sm font-bold text-white shadow-lg transition-transform ${
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg px-5 py-2 text-xs sm:text-sm font-bold text-white shadow-lg transition-transform ${
                   canStart
                     ? "bg-gradient-to-r from-pink-600 to-rose-500 shadow-pink-900/30 hover:scale-[1.02] cursor-pointer"
                     : "bg-gray-700 opacity-50 cursor-not-allowed"
@@ -265,7 +265,7 @@ export default function WaitingRoom() {
                 <Rocket className="h-3.5 w-3.5" />
               </button>
             ) : (
-              <div className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-400 bg-slate-800/50 rounded-lg border border-slate-700">
+              <div className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 bg-slate-800/50 rounded-lg border border-slate-700">
                 <Hourglass className="h-4 w-4 animate-spin text-amber-400" />
                 Waiting for Host...
               </div>

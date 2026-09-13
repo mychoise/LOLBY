@@ -9,6 +9,7 @@ async function bootstrap() {
         'http://localhost:5173',
         'http://192.168.1.71:5173',
         'https://lolby-4cnf.vercel.app',
+        'http://192.168.1.70:5173',
       ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);

@@ -14,12 +14,15 @@ const ErrorBanner = () => {
   if (!appError) return null;
 
   return (
-    <div className="fixed top-20 right-6 z-50 flex items-center gap-3 rounded-xl border-2 border-red-500 bg-[#16060c] px-5 py-3 shadow-[0_0_20px_rgba(239,68,68,0.4)] text-red-300 font-mono text-sm">
-      <AlertCircle className="h-5 w-5 text-red-400 shrink-0" />
-      <span>{appError}</span>
+    <div className="fixed top-16 sm:top-20 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-50 flex items-center justify-between gap-3 rounded-xl border-2 border-red-500 bg-[#16060c] px-4 sm:px-5 py-2.5 sm:py-3 shadow-[0_0_20px_rgba(239,68,68,0.4)] text-red-300 font-mono text-xs sm:text-sm backdrop-blur-md">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-400 shrink-0" />
+        <span className="truncate">{appError}</span>
+      </div>
       <button
         onClick={clearError}
-        className="ml-2 rounded p-1 hover:bg-red-500/20 text-red-400"
+        aria-label="Dismiss error"
+        className="ml-2 rounded p-1 hover:bg-red-500/20 text-red-400 shrink-0 cursor-pointer"
       >
         <X size={16} />
       </button>
@@ -29,10 +32,10 @@ const ErrorBanner = () => {
 
 const AppContent = () => {
   return (
-    <div className="bg-[#000000] h-auto min-h-screen w-full text-white">
+    <div className="bg-[#000000] min-h-screen w-full overflow-x-hidden text-white flex flex-col">
       <Navbar />
       <ErrorBanner />
-      <div>
+      <main className="flex-1 w-full flex flex-col">
         <Routes>
           <Route path="/" element={<CreateJoin />} />
           <Route path="/waiting-room/:roomId" element={<WaitingRoom />} />
@@ -41,7 +44,7 @@ const AppContent = () => {
           <Route path="/result" element={<Result />} />
           <Route path="*" element={<Error />} />
         </Routes>
-      </div>
+      </main>
     </div>
   );
 };

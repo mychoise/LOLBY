@@ -48,23 +48,23 @@ const CaptionWriting = () => {
   const imageUrl = currentRoundImage?.image_url || fallbackImage;
 
   return (
-    <div className="w-full min-h-screen pb-16">
-      <div className="flex flex-col gap-10 max-h-full items-center justify-center pt-12 px-4">
+    <div className="w-full min-h-screen pb-12 sm:pb-16 flex flex-col items-center">
+      <div className="w-full flex flex-col gap-6 sm:gap-10 items-center justify-center pt-6 sm:pt-10 px-3 sm:px-6 max-w-6xl">
         {/* Timer Bar */}
         <div className="w-full max-w-2xl">
           <div className="flex items-center justify-between">
-            <h1 className="uppercase rotate-1 text-[#aaaaaa] text-2xl font-[font6]">
+            <h1 className="uppercase rotate-1 text-[#aaaaaa] text-lg sm:text-2xl font-[font6]">
               Time til ded
             </h1>
             <h1
-              className={`font-[font6] text-3xl ${
+              className={`font-[font6] text-2xl sm:text-3xl ${
                 timeLeft <= 10 ? "text-[#ff3333] animate-pulse" : "text-[#facc15]"
               }`}
             >
               {timeLeft}s
             </h1>
           </div>
-          <div className="w-full bg-[#111827] rotate-0.5 mt-2 h-6 border-2 border-[#39ff14] shadow-[7px_5px_0px_#39ff14] overflow-hidden">
+          <div className="w-full bg-[#111827] rotate-0.5 mt-2 h-5 sm:h-6 border-2 border-[#39ff14] shadow-[5px_4px_0px_#39ff14] sm:shadow-[7px_5px_0px_#39ff14] overflow-hidden">
             <div
               className={`h-full transition-all duration-500 ease-linear ${
                 timeLeft <= 10 ? "bg-[#ff3333]" : "bg-[#39ff14]"
@@ -75,26 +75,26 @@ const CaptionWriting = () => {
         </div>
 
         {/* Content Row */}
-        <div className="flex flex-col lg:flex-row gap-10 items-center justify-center max-w-6xl w-full">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center justify-center w-full">
           {/* Meme Preview Card */}
-          <div className="relative bg-[#060e20] -rotate-1 w-80 sm:w-110 lg:w-130 h-80 sm:h-110 lg:h-130 border-4 border-[#39ff14] shadow-[7px_6px_0px_#facc15] overflow-hidden flex items-center justify-center">
+          <div className="relative bg-[#060e20] sm:-rotate-1 w-full max-w-[320px] min-[400px]:max-w-[360px] sm:max-w-[460px] lg:max-w-[500px] aspect-square border-3 sm:border-4 border-[#39ff14] shadow-[5px_5px_0px_#facc15] sm:shadow-[7px_6px_0px_#facc15] overflow-hidden flex items-center justify-center shrink-0">
             <img
               className="w-full h-full object-contain bg-black"
               src={imageUrl}
               alt="Current round meme"
             />
             {/* Live Text Overlay */}
-            <div className="absolute bottom-4 left-0 right-0 px-4 text-center pointer-events-none">
-              <span className="inline-block bg-black/80 px-4 py-2 text-[#ff3131] rotate-0.5 text-2xl sm:text-3xl font-[font6] uppercase tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] border border-red-500/40 max-w-[90%] break-words">
+            <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 px-2 sm:px-4 text-center pointer-events-none">
+              <span className="inline-block bg-black/85 px-3 py-1.5 sm:px-4 sm:py-2 text-[#ff3131] sm:rotate-0.5 text-base min-[400px]:text-lg sm:text-2xl md:text-3xl font-[font6] uppercase tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] border border-red-500/40 max-w-[95%] break-words leading-tight">
                 {meme || "WHEN THE CODE COMPILES..."}
               </span>
             </div>
           </div>
 
           {/* Input & Action Panel */}
-          <div className="flex-col flex gap-8 w-full max-w-md">
-            <div className="flex gap-2 flex-col">
-              <h1 className="font-[font6] rotate-0.5 text-[21px] text-[#39ff14]">
+          <div className="flex flex-col gap-5 sm:gap-7 w-full max-w-md">
+            <div className="flex gap-1.5 sm:gap-2 flex-col">
+              <h1 className="font-[font6] sm:rotate-0.5 text-lg sm:text-[21px] text-[#39ff14]">
                 YOUR PUNCHLINE:
               </h1>
               <input
@@ -104,7 +104,7 @@ const CaptionWriting = () => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleSubmit();
                 }}
-                className={`font-[font7] uppercase focus:text-[#39ff14] focus:border-r-2 focus:border-b-2 outline-0 focus:border-[#39ff14] focus:border-2 transition-all rotate-1 shadow-[3px_3px_0px_#facc15] bg-[#1a1a1a] text-[18px] pr-4 pl-4 h-16 border-l-2 border-t-2 ${
+                className={`font-[font7] uppercase focus:text-[#39ff14] focus:border-r-2 focus:border-b-2 outline-0 focus:border-[#39ff14] focus:border-2 transition-all sm:rotate-1 shadow-[3px_3px_0px_#facc15] bg-[#1a1a1a] text-base sm:text-[18px] px-3 sm:px-4 h-13 sm:h-16 border-l-2 border-t-2 ${
                   hasSubmittedCaption
                     ? "opacity-50 cursor-not-allowed text-gray-500"
                     : "text-white"
@@ -113,14 +113,14 @@ const CaptionWriting = () => {
               />
             </div>
 
-            <div className="flex gap-2 flex-col">
-              <h1 className="font-[font6] -rotate-0.5 text-[21px] text-[#39ff14]">
+            <div className="flex gap-1.5 sm:gap-2 flex-col">
+              <h1 className="font-[font6] sm:-rotate-0.5 text-lg sm:text-[21px] text-[#39ff14]">
                 LIVE PREVIEW:
               </h1>
               <input
                 disabled
                 value={meme || "WHEN THE CODE COMPILES..."}
-                className="font-[font7] uppercase text-[#39ff14] outline-0 -rotate-1 shadow-[4px_4px_0px_#39ff14] bg-[#1a1a1a] text-[18px] pr-4 pl-4 h-16 border-2 truncate"
+                className="font-[font7] uppercase text-[#39ff14] outline-0 sm:-rotate-1 shadow-[3px_3px_0px_#39ff14] sm:shadow-[4px_4px_0px_#39ff14] bg-[#1a1a1a] text-base sm:text-[18px] px-3 sm:px-4 h-13 sm:h-16 border-2 truncate"
               />
             </div>
 
@@ -128,7 +128,7 @@ const CaptionWriting = () => {
               <button
                 onClick={handleSubmit}
                 disabled={!meme.trim()}
-                className={`border-[#000] border-3 uppercase tracking-wider h-18 shadow-[4px_6px_0px_#39ff14] text-3xl font-[font6] text-[#000000] mt-2 w-full transition-all ${
+                className={`border-[#000] border-2 sm:border-3 uppercase tracking-wider h-14 sm:h-16 shadow-[4px_5px_0px_#39ff14] text-xl sm:text-2xl md:text-3xl font-[font6] text-[#000000] mt-1 sm:mt-2 w-full transition-all ${
                   meme.trim()
                     ? "bg-[#ffcc00] hover:brightness-110 active:scale-95 cursor-pointer"
                     : "bg-gray-600 opacity-60 cursor-not-allowed"
@@ -137,13 +137,13 @@ const CaptionWriting = () => {
                 MAKE IT DANK
               </button>
             ) : (
-              <div className="flex flex-col items-center justify-center p-5 bg-[#0e172a] border-2 border-emerald-400/80 rounded-2xl shadow-[0_0_20px_rgba(52,211,153,0.3)] mt-2">
-                <div className="flex items-center gap-2 text-emerald-400 font-[font6] text-xl">
-                  <CheckCircle2 className="h-6 w-6" />
+              <div className="flex flex-col items-center justify-center p-4 sm:p-5 bg-[#0e172a] border-2 border-emerald-400/80 rounded-2xl shadow-[0_0_20px_rgba(52,211,153,0.3)] mt-1 sm:mt-2">
+                <div className="flex items-center gap-2 text-emerald-400 font-[font6] text-lg sm:text-xl text-center">
+                  <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
                   <span>CAPTION LOCKED IN</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-400 text-xs font-mono mt-2">
-                  <Hourglass className="h-4 w-4 animate-spin text-amber-400" />
+                <div className="flex items-center gap-2 text-slate-400 text-xs font-mono mt-1.5 sm:mt-2 text-center">
+                  <Hourglass className="h-4 w-4 animate-spin text-amber-400 shrink-0" />
                   <span>Waiting for other players to submit...</span>
                 </div>
               </div>

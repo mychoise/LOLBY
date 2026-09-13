@@ -61,16 +61,16 @@ export default function Voting() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#120b2e] flex flex-col items-center py-6 px-4 font-sans text-white">
+    <div className="min-h-screen w-full bg-[#120b2e] flex flex-col items-center py-4 sm:py-8 px-3 sm:px-6 font-sans text-white">
       {/* Card */}
       <div className="w-full max-w-2xl rounded-2xl border border-cyan-400/60 shadow-[0_0_25px_rgba(34,211,238,0.15)] bg-[#0e0b26] overflow-hidden">
         {/* Top status bar */}
-        <div className="flex items-center justify-between px-4 py-2 border-b border-cyan-400/30">
-          <div className="flex items-center gap-2 text-cyan-300 text-xs tracking-wide font-mono">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border-b border-cyan-400/30 text-[11px] sm:text-xs">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-cyan-300 tracking-wide font-mono">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(52,211,153,0.7)]" />
-            <span>&gt; ARENA_FEED.EXE // ROUND_{roundNum}</span>
+            <span className="truncate">&gt; ARENA_FEED // R_{roundNum}</span>
           </div>
-          <div className="flex items-center gap-2 text-xs font-mono">
+          <div className="flex items-center gap-2 font-mono ml-auto">
             {votingImages.length > 1 && (
               <span className="text-amber-400 font-bold">
                 [{currentIndex + 1} / {votingImages.length}]
@@ -84,10 +84,10 @@ export default function Voting() {
         </div>
 
         {/* Meme content */}
-        <div className="p-5">
+        <div className="p-3 sm:p-5">
           {/* Top banner */}
-          <div className="mb-3 border-2 border-amber-400 bg-black py-2 px-4 text-center">
-            <p className="text-amber-300 font-[font6] uppercase text-sm tracking-wider">
+          <div className="mb-3 border-2 border-amber-400 bg-black py-1.5 sm:py-2 px-2.5 sm:px-4 text-center">
+            <p className="text-amber-300 font-[font6] uppercase text-xs sm:text-sm tracking-wider">
               {hasSubmittedVote
                 ? "YOUR VOTE IS RECORDED"
                 : "INSPECT SUBMISSION & CAST YOUR VOTE"}
@@ -95,15 +95,15 @@ export default function Voting() {
           </div>
 
           {/* Image & Caption Display */}
-          <div className="relative w-full aspect-[16/10] bg-gradient-to-b from-[#3a3550] to-[#1c1830] flex items-center justify-center overflow-hidden rounded-lg border border-slate-700">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#3a3550] to-[#1c1830] flex items-center justify-center overflow-hidden rounded-lg border border-slate-700">
             <img
               src={activeSubmission.imageUrl}
               alt="Meme to vote on"
               className="w-full h-full object-contain bg-black"
             />
             {/* Bottom overlay caption */}
-            <div className="absolute bottom-0 left-0 right-0 bg-black/75 py-3 px-4 text-center border-t border-amber-400/40">
-              <p className="text-white font-extrabold uppercase italic text-lg sm:text-xl leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] break-words">
+            <div className="absolute bottom-0 left-0 right-0 bg-black/80 py-2 sm:py-3 px-3 sm:px-4 text-center border-t border-amber-400/40 max-h-[45%] overflow-y-auto">
+              <p className="text-white font-extrabold uppercase italic text-sm sm:text-base md:text-lg leading-snug drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] break-words">
                 {activeSubmission.captionText}
               </p>
             </div>
@@ -114,43 +114,43 @@ export default function Voting() {
                 <button
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 p-2 rounded-full border border-cyan-400/50 hover:bg-black/90 disabled:opacity-30 cursor-pointer"
+                  className="absolute left-1.5 sm:left-2 top-1/2 -translate-y-1/2 bg-black/70 p-1.5 sm:p-2 rounded-full border border-cyan-400/50 hover:bg-black/90 disabled:opacity-30 cursor-pointer"
                 >
-                  <ChevronLeft className="h-6 w-6 text-cyan-300" />
+                  <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-300" />
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={currentIndex === votingImages.length - 1}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 p-2 rounded-full border border-cyan-400/50 hover:bg-black/90 disabled:opacity-30 cursor-pointer"
+                  className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-black/70 p-1.5 sm:p-2 rounded-full border border-cyan-400/50 hover:bg-black/90 disabled:opacity-30 cursor-pointer"
                 >
-                  <ChevronRight className="h-6 w-6 text-cyan-300" />
+                  <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-300" />
                 </button>
               </>
             )}
           </div>
 
           {/* Controls row */}
-          <div className="mt-5 flex flex-col gap-3">
+          <div className="mt-4 sm:mt-5 flex flex-col gap-3">
             {!hasSubmittedVote ? (
               <div className="flex flex-col sm:flex-row gap-3 items-center">
                 <button
                   onClick={() =>
                     handleSelectAndVote(activeSubmission.submissionId)
                   }
-                  className="w-full flex-1 flex items-center justify-center gap-2 rounded-xl py-4 font-bold text-lg tracking-wider border-2 transition-all bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.4)] cursor-pointer active:scale-98"
+                  className="w-full flex-1 flex items-center justify-center gap-2 rounded-xl py-3 sm:py-4 font-bold text-sm sm:text-base md:text-lg tracking-wider border-2 transition-all bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.4)] cursor-pointer active:scale-98"
                 >
-                  <Sparkles size={20} strokeWidth={2.5} />
-                  VOTE THIS DANK (+121 PTS)
+                  <Sparkles size={18} strokeWidth={2.5} className="shrink-0" />
+                  <span>VOTE THIS DANK (+121 PTS)</span>
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center p-4 bg-emerald-950/40 border border-emerald-500/60 rounded-xl">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold font-mono">
-                  <CheckCircle2 className="h-5 w-5" />
+              <div className="flex flex-col items-center justify-center p-3 sm:p-4 bg-emerald-950/40 border border-emerald-500/60 rounded-xl text-center">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold font-mono text-xs sm:text-sm">
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
                   <span>VOTE RECORDED (+121 POINTS SENT)</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-400 text-xs font-mono mt-1.5">
-                  <Hourglass className="h-3.5 w-3.5 animate-spin text-amber-400" />
+                <div className="flex items-center gap-2 text-slate-400 text-[11px] sm:text-xs font-mono mt-1">
+                  <Hourglass className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin text-amber-400 shrink-0" />
                   <span>Waiting for other hackers to finish voting...</span>
                 </div>
               </div>
@@ -158,15 +158,15 @@ export default function Voting() {
 
             {/* Thumbnail dots if multiple submissions */}
             {votingImages.length > 1 && (
-              <div className="flex justify-center gap-2 mt-2">
+              <div className="flex justify-center gap-2 mt-1 sm:mt-2">
                 {votingImages.map((sub, idx) => (
                   <button
                     key={sub.submissionId || idx}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                    className={`h-2 sm:h-2.5 rounded-full transition-all cursor-pointer ${
                       currentIndex === idx
-                        ? "w-8 bg-cyan-400"
-                        : "w-2.5 bg-slate-700 hover:bg-slate-500"
+                        ? "w-6 sm:w-8 bg-cyan-400"
+                        : "w-2 sm:w-2.5 bg-slate-700 hover:bg-slate-500"
                     }`}
                   />
                 ))}
