@@ -8,21 +8,23 @@ Inspired by the Jackbox Party Pack format: one host creates a room, friends join
 
 ## Status
 
-🚧 Pre-alpha. Core room/lobby shell not yet built. No games shipped yet.
+🚧 Active Development. The core room/lobby shell and the first playable game module (**Make It Meme**) are currently implemented and undergoing gameplay enhancements.
+
+👉 **See the comprehensive feature roadmap & gameplay analysis:** [README_MAKE_IT_MEME.md](file:///home/sabin/LOLBY/README_MAKE_IT_MEME.md)
 
 ## Features / Concept
 
 One platform, multiple game modes, all sharing the same room infrastructure:
 
-| Game                    | Format                                | Status                    |
-| ----------------------- | ------------------------------------- | ------------------------- |
-| Make It Meme            | Caption or react to memes             | Concept — rules undecided |
-| Skribble                | Draw & guess (skribbl.io-style)       | Not started               |
-| TikTok Comments Section | TBD                                   | Concept only              |
-| News                    | TBD                                   | Concept only              |
-| Fake Reviews            | TBD                                   | Concept only              |
-| Imposter                | Among Us-style hidden role/discussion | Not started               |
-| Guess the Lie           | Fibbage-style bluffing game           | Not started               |
+| Game                    | Format                                | Status                                                                  |
+| ----------------------- | ------------------------------------- | ----------------------------------------------------------------------- |
+| **Make It Meme**        | Caption or react to memes             | **In Progress** — Core loop active; adding timer engine & image swap    |
+| Skribble                | Draw & guess (skribbl.io-style)       | Not started                                                             |
+| TikTok Comments Section | TBD                                   | Concept only                                                            |
+| News                    | TBD                                   | Concept only                                                            |
+| Fake Reviews            | TBD                                   | Concept only                                                            |
+| Imposter                | Among Us-style hidden role/discussion | Not started                                                             |
+| Guess the Lie           | Fibbage-style bluffing game           | Not started                                                             |
 
 ## Architecture
 
@@ -106,12 +108,14 @@ Database migrations and meme-template seeding run automatically on startup (see 
 2. First real game module (simplest proven mechanic — candidates: Skribble, Imposter, or Guess the Lie)
 3. Remaining games added one at a time into the same shell
 
-## Open Decisions
-
-- [ ] Make It Meme: exact game loop and win condition (currently undefined)
-- [ ] TikTok Comments Section / News / Fake Reviews: no defined mechanics yet
-- [ ] Game selection: does host pick a game per room, or is each game a separate room type/URL?
-- [ ] Meme template source: self-hosted DB + Cloudflare R2 (decided) — seeding script not yet wired to an npm script
+## Open Decisions & Next Milestones
+ 
+- [x] Make It Meme: Core game loop implemented (Captions ➔ Voting ➔ Leaderboard)
+- [ ] Make It Meme: Server-side authoritative timer engine & AFK fallback (see [README_MAKE_IT_MEME.md](file:///home/sabin/LOLBY/README_MAKE_IT_MEME.md))
+- [ ] Make It Meme: Image swap / re-roll mechanic using player `extraImages` reserve pool
+- [ ] Make It Meme: Upvote / Downvote / Meme Buddy scoring & live floating emoji reactions
+- [ ] Make It Meme: Custom text styling (Top & Bottom text, font chooser, canvas PNG export)
+- [ ] TikTok Comments Section / News / Fake Reviews: Concept mechanics definition
 
 ### UI Images
 
