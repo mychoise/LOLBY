@@ -9,6 +9,7 @@ const CaptionWriting = () => {
     currentRound,
     submitCaption,
     hasSubmittedCaption,
+    extraImageGet,
   } = useGame();
 
   const [meme, setMeme] = useState("");
@@ -47,6 +48,11 @@ const CaptionWriting = () => {
   const fallbackImage = "https://imgflip.com/s/meme/Cute-Cat.jpg";
   const imageUrl = currentRoundImage?.image_url || fallbackImage;
 
+  const handleExtraImageShuffle = () => {
+    console.log("Shuffle image button clicked");
+    extraImageGet();
+  };
+
   return (
     <div className="w-full min-h-screen pb-12 sm:pb-16 flex flex-col items-center">
       <div className="w-full flex flex-col gap-6 sm:gap-10 items-center justify-center pt-6 sm:pt-10 px-3 sm:px-6 max-w-6xl">
@@ -58,7 +64,9 @@ const CaptionWriting = () => {
             </h1>
             <h1
               className={`font-[font6] text-2xl sm:text-3xl ${
-                timeLeft <= 10 ? "text-[#ff3333] animate-pulse" : "text-[#facc15]"
+                timeLeft <= 10
+                  ? "text-[#ff3333] animate-pulse"
+                  : "text-[#facc15]"
               }`}
             >
               {timeLeft}s
@@ -111,6 +119,15 @@ const CaptionWriting = () => {
                 }`}
                 placeholder="ENTER TEH TEXT..."
               />
+            </div>
+
+            <div>
+              <button
+                onClick={handleExtraImageShuffle}
+                className="bg-red-600 w-20 h-20 rounded-2xl"
+              >
+                Suffle image
+              </button>
             </div>
 
             <div className="flex gap-1.5 sm:gap-2 flex-col">

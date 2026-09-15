@@ -6,11 +6,13 @@ import Result from "./components/Result";
 import Voting from "./components/Voting";
 import WaitingRoom from "./components/WaitingRoom";
 import Error from "./components/Error";
-import { GameProvider, useGame } from "./context/GameContext";
+import { useGameStore } from "./store/useGameStore";
+import { useSocketEvents } from "./store/useSocketEvents";
 import { AlertCircle, X } from "lucide-react";
 
 const ErrorBanner = () => {
-  const { appError, clearError } = useGame();
+  const appError = useGameStore((state) => state.appError);
+  const clearError = useGameStore((state) => state.clearError);
   if (!appError) return null;
 
   return (
@@ -31,6 +33,8 @@ const ErrorBanner = () => {
 };
 
 const AppContent = () => {
+  useSocketEvents();
+
   return (
     <div className="bg-[#000000] min-h-screen w-full overflow-x-hidden text-white flex flex-col">
       <Navbar />
@@ -50,11 +54,7 @@ const AppContent = () => {
 };
 
 const App = () => {
-  return (
-    <GameProvider>
-      <AppContent />
-    </GameProvider>
-  );
+  return <AppContent />;
 };
 
 export default App;
