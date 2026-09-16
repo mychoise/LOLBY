@@ -173,6 +173,31 @@ export class RoundGateway {
     this.server.to(roomCode).emit('roundStarted', round);
   }
 
+  @SubscribeMessage('extraImageGet')
+  handleExtraImageGet(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { roomCode: string; token: string },
+  ) {
+    const room = this.roomSevice.getRoom(data.roomCode);
+    if (!room) {
+      client.emit('appError', { message: 'Room not found' });
+      return;
+    }
+    if (room.gamestatus !== 'in-progress') {
+      client.emit('appError', {
+        message: 'Game is not in progress, cannot get extra image',
+      });
+      return;
+    }
+    const player = room.players.find((p) => p.token === data.token);
+    if (!player) {
+      client.emit('appError', { message: 'Player not found' });
+      return;
+    }
+    player.currentRoundImage = player.extraImage?.shift() || null;
+    client.emit('currentRoundImage', player.currentRoundImage);
+  }
+
   @SubscribeMessage('submitCaption')
   handleSubmitCaption(
     @ConnectedSocket() client: Socket,
@@ -235,9 +260,9 @@ export class RoundGateway {
             const author = room.players.find(
               (p) => p.token === value2.playerToken,
             );
-            const match = author?.memeTemplate?.find(
-              (t) => t.id === value2.templateId,
-            );
+            const match =
+              author?.memeTemplate?.find((t) => t.id === value2.templateId) ||
+              author?.extraImage?.find((t) => t.id === value2.templateId);
             return {
               submissionId: value2.playerToken,
               imageUrl: match?.image_url,

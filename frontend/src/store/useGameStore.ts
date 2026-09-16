@@ -237,15 +237,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   extraImageGet: () => {
-    const { extraImages } = get();
-    if (extraImages.length === 0) {
-      set({ appError: "No extra images available" });
-      return;
-    }
-    set((state) => {
-      const randomIndex = Math.floor(Math.random() * state.extraImages.length);
-      const selectedImage = state.extraImages[randomIndex];
-      return { currentRoundImage: selectedImage };
+    const { roomCode, playerToken } = get();
+    socket.emit("extraImageGet", {
+      roomCode,
+      token: playerToken,
     });
   },
 
