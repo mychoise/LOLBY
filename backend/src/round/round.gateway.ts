@@ -178,7 +178,6 @@ export class RoundGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { roomCode: string; token: string },
   ) {
-    console.log('extraIMgae get call vayo radi!!!!');
     const room = this.roomSevice.getRoom(data.roomCode);
     if (!room) {
       client.emit('appError', { message: 'Room not found' });
