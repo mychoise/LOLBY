@@ -178,6 +178,7 @@ export class RoundGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { roomCode: string; token: string },
   ) {
+    console.log('extraIMgae get call vayo radi!!!!');
     const room = this.roomSevice.getRoom(data.roomCode);
     if (!room) {
       client.emit('appError', { message: 'Room not found' });
@@ -194,7 +195,8 @@ export class RoundGateway {
       client.emit('appError', { message: 'Player not found' });
       return;
     }
-    player.currentRoundImage = player.extraImage?.shift() || null;
+    console.log('extraImages are', player.extraImage);
+    player.currentRoundImage = player.extraImage?.[0] || null;
     client.emit('currentRoundImage', player.currentRoundImage);
   }
 
@@ -254,12 +256,17 @@ export class RoundGateway {
         const images = room.currentRound?.submissions;
         console.log('current round submission', images);
 
+        console.log('extraImages are', player.extraImage);
+
         const actualImage = images
           ?.filter((value) => value.playerToken !== item.token)
           .map((value2) => {
             const author = room.players.find(
               (p) => p.token === value2.playerToken,
             );
+
+            console.log('player is', player);
+            console.log('author is', author);
             const match =
               author?.memeTemplate?.find((t) => t.id === value2.templateId) ||
               author?.extraImage?.find((t) => t.id === value2.templateId);
